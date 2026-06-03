@@ -31,12 +31,15 @@ Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem
 ## Manfaat
 
 a. Bagi Hotel
+
 Pembuatan Sistem Basis Data Reservasi Hotel ini diharapkan dapat memberikan manfaat bagi berbagai pihak. Bagi pihak hotel, sistem ini dapat membantu dalam mengelola data operasional secara lebih efektif dan terstruktur, mulai dari pengelolaan data tamu, reservasi kamar, pembayaran, hingga penggunaan fasilitas hotel. Dengan adanya sistem basis data yang terintegrasi, proses pencatatan dan pencarian informasi dapat dilakukan dengan lebih cepat sehingga dapat meningkatkan kualitas pelayanan kepada pelanggan serta mengurangi risiko kesalahan pengolahan data.
 
 b. Bagi Pengguna
+
 Bagi pengguna atau tamu hotel, sistem ini memberikan kemudahan dalam proses reservasi dan memperoleh informasi terkait kamar maupun fasilitas yang tersedia. Selain itu, data transaksi dan riwayat pemesanan dapat terdokumentasi dengan baik sehingga meningkatkan kenyamanan dan kepercayaan pelanggan terhadap layanan hotel.
 
 c. Bagi Mahasiswa
+
 Bagi mahasiswa sebagai pengembang sistem, project ini menjadi sarana untuk menerapkan konsep-konsep basis data yang telah dipelajari selama perkuliahan, seperti analisis kebutuhan, perancangan Entity Relationship Diagram (ERD), normalisasi data, implementasi basis data relasional, serta pembuatan query dan objek basis data lanjutan. Melalui project ini, mahasiswa juga dapat mengembangkan kemampuan pemecahan masalah, kerja sama tim, dan dokumentasi teknis yang akan bermanfaat dalam dunia kerja maupun pengembangan sistem informasi di masa mendatang.
 
 ## Fitur Sistem
