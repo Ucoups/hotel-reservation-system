@@ -20,6 +20,14 @@ Pengelolaan data secara manual berpotensi menimbulkan berbagai permasalahan, sep
 Sistem Reservasi Hotel merupakan solusi yang dapat digunakan untuk mengelola informasi kamar, tamu, reservasi, pembayaran, penggunaan fasilitas, serta proses check-in dan check-out secara terpusat. Dengan penerapan basis data relasional, data dapat disimpan secara terorganisasi, meminimalkan redundansi, menjaga integritas data, serta memudahkan proses pengolahan informasi.
 Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem Basis Data Reservasi Hotel sebagai penerapan konsep basis data relasional yang telah dipelajari selama perkuliahan.
 
+## Rumusan Masalah
+
+1.	Bagaimana merancang sistem basis data yang mampu mengelola proses reservasi hotel secara terintegrasi?
+2.	Bagaimana membangun model data yang sesuai dengan kebutuhan operasional hotel?
+3.	Bagaimana menerapkan normalisasi hingga bentuk normal ketiga (3NF)?
+4.	Bagaimana mengimplementasikan basis data menggunakan DBMS relasional?
+5.	Bagaimana membuat query, view, function, procedure, dan trigger untuk mendukung operasional hote?
+
 ## Tujuan Project
 
 - Merancang sistem basis data reservasi hotel yang terstruktur dan terintegrasi.
