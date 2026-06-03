@@ -22,12 +22,11 @@ Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem
 
 ## Tujuan Project
 
-- Merancang database Sistem Reservasi Hotel berbasis MySQL 8.0.
-- Menerapkan normalisasi hingga 3NF.
-- Mengimplementasikan relasi antar tabel menggunakan primary key dan foreign key.
-- Menjaga integritas data menggunakan unique constraint, check constraint, default value, dan index.
-- Menyediakan script SQL lengkap untuk DDL, DML, query, view, procedure, trigger, function, dan dump database.
-- Menyusun dokumentasi project yang siap digunakan untuk laporan akademik dan repository GitHub.
+- Merancang sistem basis data reservasi hotel yang terstruktur dan terintegrasi.
+- Membuat Entity Relationship Diagram (ERD) dan skema relasional.
+- Menerapkan proses normalisasi hingga Third Normal Form (3NF).
+- Mengimplementasikan basis data menggunakan SQL.
+- Membuat query dan objek basis data lanjutan untuk mendukung pengelolaan hotel.
 
 ## Fitur Sistem
 
