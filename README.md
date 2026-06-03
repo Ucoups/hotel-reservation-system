@@ -14,7 +14,9 @@ Project ini berfokus pada perancangan database relasional yang lengkap, mulai da
 ## Latar Belakang
 
 Industri perhotelan merupakan salah satu sektor jasa yang terus berkembang seiring meningkatnya mobilitas masyarakat dan kebutuhan akomodasi. Dalam operasional hotel, pengelolaan data reservasi kamar, data tamu, pembayaran, check-in, check-out, serta penggunaan fasilitas menjadi aspek yang sangat penting untuk menjamin pelayanan yang efektif dan efisien.
+
 Pengelolaan data secara manual berpotensi menimbulkan berbagai permasalahan, seperti kesalahan pencatatan reservasi, duplikasi data tamu, kesulitan dalam memantau ketersediaan kamar, hingga keterlambatan dalam penyusunan laporan operasional hotel. Oleh karena itu, diperlukan suatu sistem basis data yang mampu mengintegrasikan seluruh data operasional hotel secara terstruktur dan konsisten.
+
 Sistem Reservasi Hotel merupakan solusi yang dapat digunakan untuk mengelola informasi kamar, tamu, reservasi, pembayaran, penggunaan fasilitas, serta proses check-in dan check-out secara terpusat. Dengan penerapan basis data relasional, data dapat disimpan secara terorganisasi, meminimalkan redundansi, menjaga integritas data, serta memudahkan proses pengolahan informasi.
 Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem Basis Data Reservasi Hotel sebagai penerapan konsep basis data relasional yang telah dipelajari selama perkuliahan.
 
