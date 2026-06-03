@@ -30,11 +30,11 @@ Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem
 
 ## Tujuan Project
 
-- Merancang sistem basis data reservasi hotel yang terstruktur dan terintegrasi.
-- Membuat Entity Relationship Diagram (ERD) dan skema relasional.
-- Menerapkan proses normalisasi hingga Third Normal Form (3NF).
-- Mengimplementasikan basis data menggunakan SQL.
-- Membuat query dan objek basis data lanjutan untuk mendukung pengelolaan hotel.
+1.  Merancang sistem basis data reservasi hotel yang terstruktur dan terintegrasi.
+2.  Membuat Entity Relationship Diagram (ERD) dan skema relasional.
+3.  Menerapkan proses normalisasi hingga Third Normal Form (3NF).
+4.  Mengimplementasikan basis data menggunakan SQL.
+5.  Membuat query dan objek basis data lanjutan untuk mendukung pengelolaan hotel.
 
 ## Manfaat
 
