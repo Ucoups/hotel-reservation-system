@@ -26,7 +26,7 @@ Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem
 2.	Bagaimana membangun model data yang sesuai dengan kebutuhan operasional hotel?
 3.	Bagaimana menerapkan normalisasi hingga bentuk normal ketiga (3NF)?
 4.	Bagaimana mengimplementasikan basis data menggunakan DBMS relasional?
-5.	Bagaimana membuat query, view, function, procedure, dan trigger untuk mendukung operasional hote?
+5.	Bagaimana membuat query, view, function, procedure, dan trigger untuk mendukung operasional hotel?
 
 ## Tujuan Project
 
