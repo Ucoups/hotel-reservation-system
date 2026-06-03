@@ -1,0 +1,6 @@
+id_tipe_kamar,nama_tipe,kapasitas,harga_per_malam,deskripsi
+1,Standard,2,350000,Kamar standar untuk tamu individu atau pasangan dengan fasilitas dasar.
+2,Superior,2,450000,Kamar superior dengan area lebih luas dan fasilitas tambahan.
+3,Deluxe,2,600000,Kamar deluxe dengan interior lebih nyaman dan pemandangan kota.
+4,Family,4,850000,Kamar keluarga dengan kapasitas lebih besar.
+5,Suite,4,1250000,Kamar suite premium dengan ruang duduk dan fasilitas lengkap.

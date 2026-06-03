@@ -1,0 +1,1004 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R] /Count 9 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2122 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+() Tj
+T*
+(Laporan Project Basis Data) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Sistem Reservasi Hotel) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Identitas Project) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Komponen Keterangan) Tj
+T*
+(--- ---) Tj
+T*
+(Nama Project Sistem Reservasi Hotel) Tj
+T*
+(Database hotel_reservation_db) Tj
+T*
+(DBMS MySQL 8.0) Tj
+T*
+(Studi Kasus Reservasi Hotel) Tj
+T*
+(Jenis Project Project Akademik Basis Data) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(BAB I Pendahuluan) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1.1 Latar Belakang) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Hotel merupakan salah satu jenis usaha jasa yang memiliki proses operasional kompleks, mulai) Tj
+T*
+(dari pendataan tamu, pengelolaan kamar, reservasi, pembayaran, check-in, check-out, hingga) Tj
+T*
+(pelaporan aktivitas. Seluruh proses tersebut membutuhkan pencatatan yang akurat agar) Tj
+T*
+(pelayanan kepada tamu berjalan baik dan data operasional dapat dipertanggungjawabkan.) Tj
+T*
+() Tj
+T*
+(Apabila data hotel dikelola tanpa struktur basis data yang baik, maka risiko duplikasi data,) Tj
+T*
+(kesalahan pencatatan, inkonsistensi status kamar, kesalahan pembayaran, dan keterlambatan) Tj
+T*
+(pelaporan akan meningkat. Oleh karena itu, diperlukan rancangan basis data relasional yang) Tj
+T*
+(mampu mengatur data secara sistematis dan menjaga integritas antar entitas.) Tj
+T*
+() Tj
+T*
+(Project ini membahas perancangan dan implementasi database Sistem Reservasi Hotel) Tj
+T*
+(menggunakan MySQL 8.0. Rancangan database mencakup tabel, relasi, constraint, index, data) Tj
+T*
+(dummy, query, view, stored procedure, function, trigger, ERD, normalisasi, dan data) Tj
+T*
+(dictionary.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1.2 Rumusan Masalah) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(1. Bagaimana merancang database yang sesuai untuk studi kasus Sistem Reservasi Hotel?) Tj
+T*
+(Halaman 1 dari 9) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 2264 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(2. Bagaimana menentukan entitas, atribut, primary key, foreign key, dan relasi antar tabel?) Tj
+T*
+(3. Bagaimana menjaga integritas data melalui constraint dan relasi database?) Tj
+T*
+(4. Bagaimana menerapkan normalisasi agar data tidak mengalami duplikasi berlebihan?) Tj
+T*
+(5. Bagaimana menyediakan query dan objek database lanjutan untuk mendukung pelaporan?) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1.3 Tujuan) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(1. Merancang database Sistem Reservasi Hotel yang terstruktur dan konsisten.) Tj
+T*
+(2. Mengimplementasikan database menggunakan MySQL 8.0.) Tj
+T*
+(3. Menerapkan primary key, foreign key, unique constraint, check constraint, default value,) Tj
+T*
+(dan index.) Tj
+T*
+(4. Menyediakan data dummy realistis untuk pengujian.) Tj
+T*
+(5. Menyediakan query, view, stored procedure, function, dan trigger.) Tj
+T*
+(6. Menyusun dokumentasi project yang siap digunakan untuk laporan dan presentasi.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1.4 Manfaat) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Project ini bermanfaat untuk memahami penerapan konsep basis data relasional secara praktis.) Tj
+T*
+(Selain itu, project ini membantu menunjukkan proses analisis kebutuhan, perancangan ERD,) Tj
+T*
+(normalisasi, implementasi SQL, dan pengujian query dalam satu studi kasus yang utuh.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(BAB II Analisis Kebutuhan) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(2.1 Aktor Sistem) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Aktor Peran) Tj
+T*
+(--- ---) Tj
+T*
+(Tamu Melakukan reservasi, menginap, dan melakukan pembayaran.) Tj
+T*
+(Resepsionis Mengelola reservasi, mencatat check-in, dan mencatat check-out.) Tj
+T*
+(Kasir Mencatat pembayaran dan status pembayaran.) Tj
+T*
+(Supervisor Memantau laporan reservasi, pembayaran, status kamar, dan log aktivitas.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(2.2 Kebutuhan Fungsional) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(No Kebutuhan Deskripsi) Tj
+T*
+(---: --- ---) Tj
+T*
+(1 Kelola data tamu Menyimpan identitas tamu hotel.) Tj
+T*
+(2 Kelola data pegawai Menyimpan pegawai yang menangani operasional hotel.) Tj
+T*
+(Halaman 2 dari 9) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 2576 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(3 Kelola tipe kamar Menyimpan kategori kamar, kapasitas, dan harga.) Tj
+T*
+(4 Kelola kamar Menyimpan nomor kamar, lantai, tipe, dan status kamar.) Tj
+T*
+(5 Kelola fasilitas Menyimpan daftar fasilitas hotel.) Tj
+T*
+(6 Kelola fasilitas kamar Mencatat fasilitas pada setiap kamar.) Tj
+T*
+(7 Kelola reservasi Mencatat transaksi reservasi tamu.) Tj
+T*
+(8 Kelola detail reservasi Mencatat kamar yang dipesan dalam reservasi.) Tj
+T*
+(9 Kelola pembayaran Mencatat pembayaran reservasi.) Tj
+T*
+(10 Kelola check-in Mencatat kedatangan aktual tamu.) Tj
+T*
+(11 Kelola check-out Mencatat kepulangan aktual dan biaya tambahan.) Tj
+T*
+(12 Kelola laporan Menyediakan laporan reservasi dan pembayaran.) Tj
+T*
+(13 Kelola log aktivitas Mencatat aktivitas penting pada sistem.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(2.3 Kebutuhan Non-Fungsional) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(No Kebutuhan Deskripsi) Tj
+T*
+(---: --- ---) Tj
+T*
+(1 Integritas data Data dijaga menggunakan PK, FK, UNIQUE, CHECK, dan DEFAULT.) Tj
+T*
+(2 Konsistensi data Nilai status dan metode pembayaran dibatasi menggunakan ENUM.) Tj
+T*
+(3 Ketersediaan data Database dapat digunakan untuk operasional dan pengujian query.) Tj
+T*
+(4 Kemudahan pelaporan View dan query disediakan untuk membantu penyusunan laporan.) Tj
+T*
+(5 Skalabilitas Struktur tabel memungkinkan penambahan data hotel di masa mendatang.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(2.4 Business Rules) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(1. Satu tamu dapat memiliki banyak reservasi.) Tj
+T*
+(2. Satu reservasi hanya dimiliki oleh satu tamu.) Tj
+T*
+(3. Satu reservasi ditangani oleh satu pegawai.) Tj
+T*
+(4. Satu tipe kamar dapat digunakan oleh banyak kamar.) Tj
+T*
+(5. Satu kamar hanya memiliki satu tipe kamar.) Tj
+T*
+(6. Nomor kamar harus unik.) Tj
+T*
+(7. Nomor identitas tamu harus unik.) Tj
+T*
+(8. Satu reservasi dapat memiliki satu atau lebih detail reservasi.) Tj
+T*
+(9. Satu detail reservasi hanya mencatat satu kamar.) Tj
+T*
+(10. Tanggal check-out rencana harus lebih besar dari tanggal check-in rencana.) Tj
+T*
+(11. Jumlah malam harus lebih dari nol.) Tj
+T*
+(12. Pembayaran harus terkait dengan reservasi valid.) Tj
+T*
+(13. Satu reservasi hanya memiliki satu check-in.) Tj
+T*
+(14. Satu reservasi hanya memiliki satu check-out.) Tj
+T*
+(15. Satu kamar dapat memiliki banyak fasilitas.) Tj
+T*
+(16. Satu fasilitas dapat dimiliki banyak kamar.) Tj
+T*
+(17. Aktivitas penting dapat dicatat dalam log aktivitas.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(BAB III Perancangan Basis Data) Tj
+T*
+(Halaman 3 dari 9) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 1740 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.1 Identifikasi Entitas) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Database terdiri dari 12 tabel:) Tj
+T*
+() Tj
+T*
+(No Entitas Fungsi) Tj
+T*
+(---: --- ---) Tj
+T*
+(1 tamu Menyimpan data identitas tamu.) Tj
+T*
+(2 pegawai Menyimpan data pegawai hotel.) Tj
+T*
+(3 tipe_kamar Menyimpan kategori kamar dan harga.) Tj
+T*
+(4 fasilitas Menyimpan data fasilitas.) Tj
+T*
+(5 kamar Menyimpan data kamar fisik hotel.) Tj
+T*
+(6 reservasi Menyimpan transaksi reservasi.) Tj
+T*
+(7 detail_reservasi Menyimpan rincian kamar dalam reservasi.) Tj
+T*
+(8 pembayaran Menyimpan pembayaran reservasi.) Tj
+T*
+(9 checkin Menyimpan data check-in.) Tj
+T*
+(10 checkout Menyimpan data check-out.) Tj
+T*
+(11 kamar_fasilitas Menyimpan relasi kamar dan fasilitas.) Tj
+T*
+(12 log_aktivitas Menyimpan aktivitas sistem.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.2 ERD) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(ERD menggunakan notasi Crow's Foot dan tersedia pada file erd/ERD_CrowFoot.mmd serta) Tj
+T*
+(erd/ERD_CrowFoot.drawio.) Tj
+T*
+() Tj
+T*
+(Relasi utama:) Tj
+T*
+() Tj
+T*
+(- tamu ke reservasi: 1:M.) Tj
+T*
+(- pegawai ke reservasi: 1:M.) Tj
+T*
+(- tipe_kamar ke kamar: 1:M.) Tj
+T*
+(- reservasi ke detail_reservasi: 1:M.) Tj
+T*
+(- kamar ke detail_reservasi: 1:M.) Tj
+T*
+(- reservasi ke pembayaran: 1:M.) Tj
+T*
+(- reservasi ke checkin: 1:1.) Tj
+T*
+(- reservasi ke checkout: 1:1.) Tj
+T*
+(- kamar ke fasilitas: M:N melalui kamar_fasilitas.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.3 Normalisasi) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Normalisasi dilakukan dari UNF sampai 3NF.) Tj
+T*
+() Tj
+T*
+(Halaman 4 dari 9) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 1936 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(Tahap Hasil) Tj
+T*
+(--- ---) Tj
+T*
+(UNF Data masih memiliki repeating group, nilai multivalue, dan redundansi.) Tj
+T*
+(1NF Nilai dibuat atomik dan repeating group dihilangkan.) Tj
+T*
+(2NF Partial dependency dihilangkan dengan memisahkan data master dan transaksi.) Tj
+T*
+(3NF Transitive dependency dihilangkan sehingga setiap atribut non-key bergantung langsung) Tj
+T*
+(pada primary key.) Tj
+T*
+() Tj
+T*
+(Functional dependency utama:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(id_tamu -> nama_tamu, no_identitas, email) Tj
+T*
+(id_pegawai -> nama_pegawai, jabatan) Tj
+T*
+(id_tipe_kamar -> nama_tipe, kapasitas, harga_per_malam) Tj
+T*
+(id_kamar -> id_tipe_kamar, nomor_kamar) Tj
+T*
+(id_reservasi -> id_tamu, id_pegawai, tanggal_reservasi) Tj
+T*
+(id_pembayaran -> jumlah_bayar, metode_pembayaran) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(3.4 Data Dictionary) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Data dictionary tersedia pada data_dictionary/Data_Dictionary.md dan) Tj
+T*
+(data_dictionary/Data_Dictionary.xlsx. Dokumentasi tersebut memuat nama tabel, nama kolom,) Tj
+T*
+(tipe data, panjang data, primary key, foreign key, unique key, nullable, default value,) Tj
+T*
+(constraint, dan deskripsi.) Tj
+T*
+() Tj
+T*
+(Ringkasan database:) Tj
+T*
+() Tj
+T*
+(- Jumlah tabel: 12.) Tj
+T*
+(- Jumlah primary key: 12 constraint.) Tj
+T*
+(- Jumlah foreign key: 13 constraint.) Tj
+T*
+(- Jumlah unique key: 9 constraint.) Tj
+T*
+(- Jumlah check constraint: 8 constraint.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(BAB IV Implementasi Basis Data) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.1 Implementasi DDL) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Implementasi DDL terdapat pada database/ddl/01_ddl.sql. File tersebut berisi:) Tj
+T*
+() Tj
+T*
+(- CREATE DATABASE IF NOT EXISTS hotel_reservation_db.) Tj
+T*
+(- USE hotel_reservation_db.) Tj
+T*
+(Halaman 5 dari 9) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 15 0 R >>
+endobj
+15 0 obj
+<< /Length 1623 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(- DROP TABLE IF EXISTS dengan urutan child ke parent.) Tj
+T*
+(- CREATE TABLE untuk 12 tabel.) Tj
+T*
+(- Primary key, foreign key, unique key, check constraint, default value, dan index.) Tj
+T*
+(- ENGINE=InnoDB pada seluruh tabel.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.2 Implementasi DML) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Implementasi DML terdapat pada database/dml/02_dml.sql. Data dummy dibuat realistis dengan) Tj
+T*
+(konteks hotel di Indonesia.) Tj
+T*
+() Tj
+T*
+(Ringkasan data:) Tj
+T*
+() Tj
+T*
+(Tabel Jumlah Minimal Status) Tj
+T*
+(--- ---: ---) Tj
+T*
+(tamu 20 Terpenuhi) Tj
+T*
+(pegawai 10 Terpenuhi) Tj
+T*
+(tipe_kamar 5 Terpenuhi) Tj
+T*
+(fasilitas 10 Terpenuhi) Tj
+T*
+(kamar 20 Terpenuhi) Tj
+T*
+(reservasi 20 Terpenuhi) Tj
+T*
+(detail_reservasi 20 Terpenuhi) Tj
+T*
+(pembayaran 20 Terpenuhi) Tj
+T*
+(checkin 10 Terpenuhi) Tj
+T*
+(checkout 10 Terpenuhi) Tj
+T*
+(kamar_fasilitas 30 Terpenuhi) Tj
+T*
+(log_aktivitas 10 Terpenuhi) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.3 Implementasi View) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(View terdapat pada database/view/04_view.sql.) Tj
+T*
+() Tj
+T*
+(View Fungsi) Tj
+T*
+(--- ---) Tj
+T*
+(vw_detail_reservasi_tamu Menampilkan detail reservasi tamu beserta kamar dan tipe kamar.) Tj
+T*
+(vw_laporan_pembayaran Menampilkan laporan pembayaran reservasi.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.4 Implementasi Stored Procedure) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Stored procedure terdapat pada database/procedure/05_procedure.sql.) Tj
+T*
+() Tj
+T*
+(Procedure Fungsi) Tj
+T*
+(--- ---) Tj
+T*
+(Halaman 6 dari 9) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 17 0 R >>
+endobj
+17 0 obj
+<< /Length 1677 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(sp_hitung_total_reservasi Menghitung total biaya reservasi berdasarkan subtotal pada tabel) Tj
+T*
+(detail_reservasi.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.5 Implementasi Function) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Function terdapat pada database/function/07_function.sql.) Tj
+T*
+() Tj
+T*
+(Function Fungsi) Tj
+T*
+(--- ---) Tj
+T*
+(fn_hitung_total_biaya Menghitung total biaya berdasarkan harga per malam dan jumlah malam.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.6 Implementasi Trigger) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Trigger terdapat pada database/trigger/06_trigger.sql.) Tj
+T*
+() Tj
+T*
+(Trigger Fungsi) Tj
+T*
+(--- ---) Tj
+T*
+(trg_after_pembayaran_insert Mencatat log aktivitas setelah data pembayaran baru dimasukkan.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(BAB V Pengujian Query dan Objek Lanjutan) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.1 Query Sederhana) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(File database/query/03_query.sql menyediakan query sederhana untuk:) Tj
+T*
+() Tj
+T*
+(- Menampilkan seluruh data tamu.) Tj
+T*
+(- Menampilkan kamar yang tersedia.) Tj
+T*
+(- Menampilkan tipe kamar dengan harga di atas Rp500.000.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.2 Query Join) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Query join digunakan untuk menggabungkan data minimal tiga tabel, antara lain:) Tj
+T*
+() Tj
+T*
+(- Detail reservasi dengan data tamu dan pegawai.) Tj
+T*
+(- Detail kamar yang dipesan.) Tj
+T*
+(- Laporan pembayaran per reservasi.) Tj
+T*
+(- Fasilitas pada setiap kamar.) Tj
+T*
+() Tj
+T*
+(Halaman 7 dari 9) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 19 0 R >>
+endobj
+19 0 obj
+<< /Length 1789 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+() Tj
+T*
+(5.3 Query Subquery dan CTE) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Query subquery digunakan untuk mencari reservasi dengan total biaya di atas rata-rata. CTE) Tj
+T*
+(digunakan untuk menghitung ringkasan total pembayaran per reservasi.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.4 Query Group By dan Having) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Query GROUP BY dan HAVING digunakan untuk menghitung jumlah reservasi per tamu dan menyaring) Tj
+T*
+(hasil berdasarkan jumlah reservasi.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.5 Pengujian View, Procedure, Function, dan Trigger) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Contoh pengujian:) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(SELECT * FROM vw_detail_reservasi_tamu;) Tj
+T*
+(SELECT * FROM vw_laporan_pembayaran;) Tj
+T*
+() Tj
+T*
+(CALL sp_hitung_total_reservasi\(1, @total\);) Tj
+T*
+(SELECT @total AS total_biaya_reservasi;) Tj
+T*
+() Tj
+T*
+(SELECT fn_hitung_total_biaya\(350000, 2\) AS total_biaya;) Tj
+T*
+() Tj
+T*
+(INSERT INTO pembayaran \(id_reservasi, tanggal_pembayaran, jumlah_bayar, metode_pembayaran,) Tj
+T*
+(status_pembayaran\)) Tj
+T*
+(VALUES \(1, CURDATE\(\), 100000.00, 'Transfer', 'Pending'\);) Tj
+T*
+() Tj
+T*
+(SELECT * FROM log_aktivitas) Tj
+T*
+(WHERE aktivitas = 'Pembayaran Masuk') Tj
+T*
+(ORDER BY waktu_aktivitas DESC;) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(BAB VI Penutup) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6.1 Kesimpulan) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Project Sistem Reservasi Hotel berhasil merancang dan mengimplementasikan database) Tj
+T*
+(relasional menggunakan MySQL 8.0. Database memiliki 12 tabel utama, relasi antar tabel,) Tj
+T*
+(Halaman 8 dari 9) Tj
+ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 21 0 R >>
+endobj
+21 0 obj
+<< /Length 1666 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+14 TL
+(constraint integritas data, data dummy realistis, query pengujian, view, stored procedure,) Tj
+T*
+(function, trigger, ERD, normalisasi, data dictionary, dan database dump.) Tj
+T*
+() Tj
+T*
+(Rancangan database telah memenuhi prinsip dasar Basis Data, terutama dalam hal konsistensi) Tj
+T*
+(nama tabel dan kolom, penerapan primary key dan foreign key, normalisasi hingga 3NF, serta) Tj
+T*
+(penyediaan objek database lanjutan untuk mendukung kebutuhan pelaporan dan audit.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6.2 Saran) Tj
+T*
+(----------------------------------------) Tj
+T*
+() Tj
+T*
+(Pengembangan selanjutnya dapat mencakup:) Tj
+T*
+() Tj
+T*
+(1. Pembuatan antarmuka aplikasi berbasis web atau desktop.) Tj
+T*
+(2. Penambahan fitur manajemen pengguna dan hak akses.) Tj
+T*
+(3. Penambahan laporan okupansi kamar dan pendapatan bulanan.) Tj
+T*
+(4. Integrasi sistem reservasi online.) Tj
+T*
+(5. Pengembangan backup dan restore database otomatis.) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Lampiran) Tj
+T*
+(============================================================) Tj
+T*
+() Tj
+T*
+(Lampiran Lokasi File) Tj
+T*
+(--- ---) Tj
+T*
+(DDL database/ddl/01_ddl.sql) Tj
+T*
+(DML database/dml/02_dml.sql) Tj
+T*
+(Query database/query/03_query.sql) Tj
+T*
+(View database/view/04_view.sql) Tj
+T*
+(Procedure database/procedure/05_procedure.sql) Tj
+T*
+(Trigger database/trigger/06_trigger.sql) Tj
+T*
+(Function database/function/07_function.sql) Tj
+T*
+(ERD erd/ERD_CrowFoot.mmd) Tj
+T*
+(Data Dictionary data_dictionary/Data_Dictionary.md) Tj
+T*
+(Normalisasi normalization/ dan docs/normalization/) Tj
+T*
+(Database Dump database/dump/hotel_reservation_dump.sql) Tj
+T*
+(Halaman 9 dari 9) Tj
+ET
+endstream
+endobj
+xref
+0 22
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000169 00000 n 
+0000000239 00000 n 
+0000000365 00000 n 
+0000002539 00000 n 
+0000002665 00000 n 
+0000004981 00000 n 
+0000005107 00000 n 
+0000007735 00000 n 
+0000007863 00000 n 
+0000009656 00000 n 
+0000009784 00000 n 
+0000011773 00000 n 
+0000011901 00000 n 
+0000013577 00000 n 
+0000013705 00000 n 
+0000015435 00000 n 
+0000015563 00000 n 
+0000017405 00000 n 
+0000017533 00000 n 
+trailer << /Size 22 /Root 1 0 R >>
+startxref
+19252
+%%EOF

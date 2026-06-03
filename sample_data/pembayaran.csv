@@ -1,0 +1,23 @@
+id_pembayaran,id_reservasi,tanggal_pembayaran,jumlah_bayar,metode_pembayaran,status_pembayaran
+1,1,5/1/2026,700000,Transfer,Lunas
+2,2,5/2/2026,1350000,Kartu Kredit,Lunas
+3,3,5/3/2026,1200000,E-Wallet,Lunas
+4,4,5/4/2026,3400000,Transfer,Lunas
+5,5,5/5/2026,2500000,Kartu Kredit,Lunas
+6,6,5/6/2026,700000,Tunai,Lunas
+7,7,5/7/2026,900000,Transfer,Lunas
+8,8,5/8/2026,1800000,E-Wallet,Lunas
+9,9,5/9/2026,1700000,Kartu Kredit,Lunas
+10,10,5/10/2026,3750000,Transfer,Lunas
+11,11,5/11/2026,1600000,Transfer,Lunas
+12,12,5/12/2026,600000,Tunai,Lunas
+13,13,5/13/2026,2550000,Transfer,Pending
+14,14,5/14/2026,2500000,Kartu Kredit,Lunas
+15,15,5/15/2026,1400000,E-Wallet,Pending
+16,16,5/16/2026,2100000,Transfer,Lunas
+17,17,5/17/2026,850000,Tunai,Lunas
+18,18,5/18/2026,2500000,Kartu Kredit,Pending
+19,19,5/19/2026,1350000,Transfer,Pending
+20,20,5/20/2026,1200000,E-Wallet,Pending
+21,21,5/21/2026,1700000,Transfer,Refund
+22,22,5/22/2026,1600000,Kartu Kredit,Lunas

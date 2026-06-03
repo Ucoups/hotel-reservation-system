@@ -1,0 +1,11 @@
+id_checkout,id_reservasi,waktu_checkout,id_pegawai,biaya_tambahan,catatan
+1,1,5/12/2026 11:00,2,0,Check-out selesai tanpa biaya tambahan.
+2,2,5/14/2026 10:45,4,50000,Tambahan biaya laundry.
+3,3,5/14/2026 11:10,1,0,Kamar dikembalikan dalam kondisi baik.
+4,4,5/17/2026 11:25,2,100000,Tambahan room service.
+5,5,5/17/2026 10:55,7,0,Tamu puas dengan layanan suite.
+6,6,5/17/2026 11:15,4,0,Check-out rombongan selesai.
+7,7,5/20/2026 11:05,1,75000,Tambahan minibar.
+8,8,5/22/2026 10:50,2,0,Check-out normal.
+9,9,5/22/2026 12:00,7,150000,Tambahan late checkout.
+10,10,5/24/2026 11:30,1,0,Check-out suite selesai.

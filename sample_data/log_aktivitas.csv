@@ -1,0 +1,13 @@
+id_log,id_pegawai,aktivitas,waktu_aktivitas,keterangan
+1,1,Membuat Reservasi,5/1/2026 9:15,Reservasi ID 1 dibuat untuk tamu Andi Pratama.
+2,3,Mencatat Pembayaran,5/2/2026 10:20,Pembayaran reservasi ID 2 dicatat lunas.
+3,4,Proses Check-in,5/11/2026 14:20,Check-in reservasi ID 2 berhasil dilakukan.
+4,2,Proses Check-out,5/14/2026 10:45,Check-out reservasi ID 2 selesai dengan biaya laundry.
+5,7,Konfirmasi Reservasi,5/15/2026 11:00,Reservasi ID 15 dikonfirmasi oleh customer service.
+6,9,Mencatat Pembayaran,5/16/2026 13:30,Pembayaran reservasi ID 16 diterima melalui transfer.
+7,1,Update Status Kamar,5/17/2026 12:00,Status kamar diperbarui setelah check-out.
+8,5,Pemeriksaan Kamar,5/18/2026 9:00,Housekeeping memeriksa kamar setelah tamu check-out.
+9,8,Audit Malam,5/19/2026 23:30,Night auditor melakukan pemeriksaan transaksi harian.
+10,6,Monitoring Operasional,5/20/2026 16:45,Manager operasional mengevaluasi tingkat okupansi kamar.
+11,3,Proses Refund,5/21/2026 14:10,Refund reservasi ID 21 dicatat karena reservasi dibatalkan.
+12,7,Konfirmasi Reservasi,5/22/2026 10:35,Reservasi ID 22 dikonfirmasi untuk jadwal menginap bulan Juni.
