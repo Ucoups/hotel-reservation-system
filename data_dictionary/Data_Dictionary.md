@@ -14,7 +14,7 @@ Data dictionary ini disusun berdasarkan struktur final database `hotel_reservati
 
 ## Kamus Data
 
-| Nama Tabel | Nama Kolom | Tipe Data | Panjang Data | Primary Key | Foreign Key | Unique Key | Nullable | Default Value | Constraint | Deskripsi |
+| Entitas | Atribut| Tipe Data | Panjang Data | Primary Key | Foreign Key | Unique Key | Nullable | Default Value | Constraint | Deskripsi |
 |---|---|---|---|---|---|---|---|---|---|---|
 | tamu | id_tamu | INT | - | Ya | Tidak | Tidak | Tidak | AUTO_INCREMENT | PRIMARY KEY, AUTO_INCREMENT | Identitas unik untuk setiap tamu. |
 | tamu | nama_tamu | VARCHAR | 100 | Tidak | Tidak | Tidak | Tidak | - | NOT NULL | Nama lengkap tamu hotel. |
