@@ -161,7 +161,6 @@ Hotel_Reservation_System/
 - MySQL 8.0
 - MySQL Workbench
 - Mermaid ERD
-- Draw.io
 - Markdown
 - CSV sample data
 
