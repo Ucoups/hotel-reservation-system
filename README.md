@@ -66,14 +66,33 @@ Bagi mahasiswa sebagai pengembang sistem, project ini menjadi sarana untuk mener
 - Function untuk menghitung total biaya.
 - Trigger untuk validasi reservasi, perubahan status kamar, dan pencatatan aktivitas pembayaran.
 
-## Aturan Bisnis Utama
+## Aturan Bisnis
 
 - Kamar yang sudah memiliki reservasi aktif pada periode tanggal tertentu tidak dapat dipesan kembali jika periode tanggalnya bertabrakan.
-- Kamar dengan status `Perawatan` tidak dapat dimasukkan ke detail reservasi.
-- Saat kamar dimasukkan ke detail reservasi, status kamar berubah menjadi `Dipesan` jika sebelumnya `Tersedia`.
-- Saat tamu melakukan check-in, status kamar pada reservasi tersebut berubah menjadi `Terisi`.
-- Saat tamu melakukan check-out, status kamar pada reservasi tersebut kembali menjadi `Tersedia` selama kamar tidak sedang `Perawatan`.
-- Reservasi berstatus `Dibatalkan` tidak dihitung sebagai konflik dalam pengecekan double booking.
+- Satu tamu dapat memiliki banyak reservasi.
+- Satu reservasi hanya dimiliki oleh satu tamu.
+- Satu reservasi ditangani oleh satu pegawai.
+- Satu tipe kamar dapat digunakan oleh banyak kamar.
+- Satu kamar hanya memiliki satu tipe kamar.
+- Nomor kamar harus bersifat unik.
+- Nomor identitas tamu harus bersifat unik.
+- Satu reservasi dapat memiliki satu atau lebih detail reservasi.
+- Satu detail reservasi hanya mencatat satu kamar.
+- Tanggal check-out rencana harus lebih besar dari tanggal check-in rencana.
+- Jumlah malam menginap harus lebih dari nol.
+- Pembayaran harus terkait dengan reservasi yang valid.
+- Satu reservasi hanya memiliki satu data check-in.
+- Satu reservasi hanya memiliki satu data check-out.
+- Satu kamar dapat memiliki banyak fasilitas.
+- Satu fasilitas dapat dimiliki oleh banyak kamar.
+- Aktivitas penting dapat dicatat dalam log aktivitas.
+- Kamar tidak boleh dipesan pada periode tanggal yang bertabrakan dengan reservasi aktif lain untuk kamar yang sama.
+- Reservasi berstatus Dibatalkan tidak dihitung sebagai konflik dalam pengecekan double booking.
+- Kamar dengan status Perawatan tidak boleh dimasukkan ke detail reservasi.
+- Status kamar berubah menjadi Dipesan setelah kamar berhasil dimasukkan ke detail reservasi dan sebelumnya berstatus Tersedia.
+- Status kamar berubah menjadi Terisi ketika tamu melakukan check-in.
+-Status kamar kembali menjadi Tersedia ketika tamu melakukan check-out, kecuali kamar sedang dalam status Perawatan.
+
 
 ## Aktor Sistem
 
@@ -261,10 +280,10 @@ Jenis screenshot yang direkomendasikan:
 
 | Nama | NIM | Peran | Tanggung Jawab |
 |---|---|---|---|
-| NAMA_ANGGOTA_1 | NIM_ANGGOTA_1 | Database Designer | Merancang ERD, relasi, dan normalisasi. |
+| NASYWA PUTRI MAITSA | K1D024043 | Database Designer | Merancang ERD, relasi, dan normalisasi. |
 | ABDURRAHMAN YUSUF | K1D024058 | SQL Developer | Menyusun DDL, DML, query, view, procedure, function, dan trigger. |
-| NAMA_ANGGOTA_3 | NIM_ANGGOTA_3 | Documentation Writer | Menyusun proposal, laporan, data dictionary, dan README. |
-| NAMA_ANGGOTA_4 | NIM_ANGGOTA_4 | Tester | Menguji script SQL dan validasi hasil query. |
+| NAYLA EDENINE QOHAR | K1D024044 | Documentation Writer | Menyusun laporan, data dictionary, dan README. |
+| BERTHA MISELLA SILALAHI | K1D024068 | Tester & Editing | Menguji pada SQL, membuat PPT, menyusun video demo |
 
 ## Lisensi
 
