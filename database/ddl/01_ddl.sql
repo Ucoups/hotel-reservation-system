@@ -4,6 +4,9 @@ CREATE DATABASE IF NOT EXISTS hotel_reservation_db
 
 USE hotel_reservation_db;
 
+-- =========================================================
+-- DROP TABLE (Urutan dari yang memiliki FK terbanyak)
+-- =========================================================
 DROP TABLE IF EXISTS log_aktivitas;
 DROP TABLE IF EXISTS kamar_fasilitas;
 DROP TABLE IF EXISTS checkout;
@@ -17,6 +20,9 @@ DROP TABLE IF EXISTS tipe_kamar;
 DROP TABLE IF EXISTS pegawai;
 DROP TABLE IF EXISTS tamu;
 
+-- =========================================================
+-- 1. TABEL MASTER TAMU
+-- =========================================================
 CREATE TABLE tamu (
     id_tamu INT AUTO_INCREMENT PRIMARY KEY,
     nama_tamu VARCHAR(100) NOT NULL,
@@ -25,18 +31,28 @@ CREATE TABLE tamu (
     no_telepon VARCHAR(20) NOT NULL,
     email VARCHAR(100) UNIQUE,
     alamat TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_active TINYINT(1) DEFAULT 1 COMMENT '1 = Aktif, 0 = Soft Delete',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 2. TABEL MASTER PEGAWAI
+-- =========================================================
 CREATE TABLE pegawai (
     id_pegawai INT AUTO_INCREMENT PRIMARY KEY,
     nama_pegawai VARCHAR(100) NOT NULL,
     jabatan VARCHAR(50) NOT NULL,
     no_telepon VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_active TINYINT(1) DEFAULT 1 COMMENT '1 = Aktif, 0 = Non-Aktif',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 3. TABEL TIPE KAMAR
+-- =========================================================
 CREATE TABLE tipe_kamar (
     id_tipe_kamar INT AUTO_INCREMENT PRIMARY KEY,
     nama_tipe VARCHAR(50) NOT NULL UNIQUE,
@@ -45,12 +61,18 @@ CREATE TABLE tipe_kamar (
     deskripsi TEXT
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 4. TABEL FASILITAS
+-- =========================================================
 CREATE TABLE fasilitas (
     id_fasilitas INT AUTO_INCREMENT PRIMARY KEY,
     nama_fasilitas VARCHAR(80) NOT NULL UNIQUE,
     deskripsi TEXT
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 5. TABEL KAMAR
+-- =========================================================
 CREATE TABLE kamar (
     id_kamar INT AUTO_INCREMENT PRIMARY KEY,
     id_tipe_kamar INT NOT NULL,
@@ -63,11 +85,14 @@ CREATE TABLE kamar (
     INDEX idx_kamar_status (status_kamar)
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 6. TABEL RESERVASI (HEADER)
+-- =========================================================
 CREATE TABLE reservasi (
     id_reservasi INT AUTO_INCREMENT PRIMARY KEY,
     id_tamu INT NOT NULL,
     id_pegawai INT NOT NULL,
-    tanggal_reservasi DATE NOT NULL,
+    tanggal_reservasi DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     tanggal_checkin_rencana DATE NOT NULL,
     tanggal_checkout_rencana DATE NOT NULL,
     status_reservasi ENUM('Menunggu', 'Dikonfirmasi', 'Check-in', 'Selesai', 'Dibatalkan') NOT NULL DEFAULT 'Menunggu',
@@ -81,13 +106,17 @@ CREATE TABLE reservasi (
     INDEX idx_reservasi_status (status_reservasi)
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 7. TABEL DETAIL RESERVASI
+-- =========================================================
 CREATE TABLE detail_reservasi (
     id_detail_reservasi INT AUTO_INCREMENT PRIMARY KEY,
     id_reservasi INT NOT NULL,
     id_kamar INT NOT NULL,
     jumlah_malam INT NOT NULL CHECK (jumlah_malam > 0),
     harga_per_malam DECIMAL(12,2) NOT NULL CHECK (harga_per_malam >= 0),
-    subtotal DECIMAL(12,2) NOT NULL CHECK (subtotal >= 0),
+    -- UPGRADE: Otomatis dihitung oleh database untuk akurasi data finansial
+    subtotal DECIMAL(12,2) GENERATED ALWAYS AS (jumlah_malam * harga_per_malam) STORED,
     CONSTRAINT fk_detail_reservasi FOREIGN KEY (id_reservasi) REFERENCES reservasi(id_reservasi)
         ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT fk_detail_kamar FOREIGN KEY (id_kamar) REFERENCES kamar(id_kamar)
@@ -96,10 +125,13 @@ CREATE TABLE detail_reservasi (
     INDEX idx_detail_kamar (id_kamar)
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 8. TABEL PEMBAYARAN
+-- =========================================================
 CREATE TABLE pembayaran (
     id_pembayaran INT AUTO_INCREMENT PRIMARY KEY,
     id_reservasi INT NOT NULL,
-    tanggal_pembayaran DATE NOT NULL,
+    tanggal_pembayaran DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     jumlah_bayar DECIMAL(12,2) NOT NULL CHECK (jumlah_bayar > 0),
     metode_pembayaran ENUM('Tunai', 'Transfer', 'Kartu Kredit', 'E-Wallet') NOT NULL,
     status_pembayaran ENUM('Pending', 'Lunas', 'Gagal', 'Refund') NOT NULL DEFAULT 'Pending',
@@ -109,10 +141,13 @@ CREATE TABLE pembayaran (
     INDEX idx_pembayaran_status (status_pembayaran)
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 9. TABEL CHECK-IN
+-- =========================================================
 CREATE TABLE checkin (
     id_checkin INT AUTO_INCREMENT PRIMARY KEY,
     id_reservasi INT NOT NULL UNIQUE,
-    waktu_checkin DATETIME NOT NULL,
+    waktu_checkin DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_pegawai INT NOT NULL,
     catatan TEXT,
     CONSTRAINT fk_checkin_reservasi FOREIGN KEY (id_reservasi) REFERENCES reservasi(id_reservasi)
@@ -121,12 +156,15 @@ CREATE TABLE checkin (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 10. TABEL CHECK-OUT
+-- =========================================================
 CREATE TABLE checkout (
     id_checkout INT AUTO_INCREMENT PRIMARY KEY,
     id_reservasi INT NOT NULL UNIQUE,
-    waktu_checkout DATETIME NOT NULL,
+    waktu_checkout DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_pegawai INT NOT NULL,
-    biaya_tambahan DECIMAL(12,2) NOT NULL DEFAULT 0 CHECK (biaya_tambahan >= 0),
+    biaya_tambahan DECIMAL(12,2) NOT NULL DEFAULT 0.00 CHECK (biaya_tambahan >= 0),
     catatan TEXT,
     CONSTRAINT fk_checkout_reservasi FOREIGN KEY (id_reservasi) REFERENCES reservasi(id_reservasi)
         ON UPDATE CASCADE ON DELETE CASCADE,
@@ -134,6 +172,9 @@ CREATE TABLE checkout (
         ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 11. TABEL RELASI KAMAR & FASILITAS (MANY TO MANY)
+-- =========================================================
 CREATE TABLE kamar_fasilitas (
     id_kamar INT NOT NULL,
     id_fasilitas INT NOT NULL,
@@ -144,6 +185,9 @@ CREATE TABLE kamar_fasilitas (
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- 12. TABEL LOG AKTIVITAS (AUDIT TRAIL)
+-- =========================================================
 CREATE TABLE log_aktivitas (
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_pegawai INT NULL,
@@ -156,3 +200,41 @@ CREATE TABLE log_aktivitas (
     INDEX idx_log_pegawai (id_pegawai)
 ) ENGINE=InnoDB;
 
+-- =========================================================
+-- AUTOMATION: TRIGGERS UNTUK OTOMASI STATUS KAMAR
+-- =========================================================
+DELIMITER //
+
+-- Trigger 1: Otomatis ubah status kamar menjadi 'Terisi' saat check-in terjadi
+CREATE TRIGGER trg_after_checkin
+AFTER INSERT ON checkin
+FOR EACH ROW
+BEGIN
+    UPDATE kamar 
+    SET status_kamar = 'Terisi'
+    WHERE id_kamar IN (
+        SELECT id_kamar FROM detail_reservasi WHERE id_reservasi = NEW.id_reservasi
+    );
+    
+    UPDATE reservasi
+    SET status_reservasi = 'Check-in'
+    WHERE id_reservasi = NEW.id_reservasi;
+END //
+
+-- Trigger 2: Otomatis ubah status kamar menjadi 'Tersedia' setelah check-out selesai
+CREATE TRIGGER trg_after_checkout
+AFTER INSERT ON checkout
+FOR EACH ROW
+BEGIN
+    UPDATE kamar 
+    SET status_kamar = 'Tersedia'
+    WHERE id_kamar IN (
+        SELECT id_kamar FROM detail_reservasi WHERE id_reservasi = NEW.id_reservasi
+    );
+    
+    UPDATE reservasi
+    SET status_reservasi = 'Selesai'
+    WHERE id_reservasi = NEW.id_reservasi;
+END //
+
+DELIMITER ;

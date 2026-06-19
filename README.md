@@ -1,275 +1,177 @@
-# Hotel Reservation System
+# Hotel Reservation System - PMS Ultimate (V6-HyperScale)
 
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
-![Database Project](https://img.shields.io/badge/Database-Project-success)
-![Crow's Foot ERD](https://img.shields.io/badge/ERD-Crow's%20Foot-orange)
-![Academic Project](https://img.shields.io/badge/Academic-Project-purple)
+![MySQL](https://img.shields.io/badge/MySQL-8.0%20%2F%208.4-blue)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-success)
+![Express](https://img.shields.io/badge/Express.js-Backend-blueviolet)
+![Next.js](https://img.shields.io/badge/Next.js-16%20%28React%2019%29-black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS%20v4-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+
+**🔒 Akses Uji Coba (Superadmin):**
+- **Email/Username**: `superadmin@hotel.com`
+- **Password**: `password123`
 
 ## Deskripsi Project
 
-Hotel Reservation System adalah project Basis Data dengan studi kasus Sistem Reservasi Hotel. Project ini dirancang untuk mengelola data tamu, pegawai, tipe kamar, kamar, fasilitas, reservasi, detail reservasi, pembayaran, check-in, check-out, dan log aktivitas menggunakan MySQL 8.0.
+Hotel Reservation System adalah project Sistem Reservasi Hotel skala komersial (*Enterprise Grade*) terintegrasi yang telah melalui evolusi arsitektur dari versi standar hingga level **PMS Ultimate (V5)**. Aplikasi ini mencakup seluruh aspek ekosistem hotel mulai dari reservasi, *housekeeping*, manajemen *F&B* (Restoran), hingga sistem *billing* berlapis.
 
-Project ini berfokus pada perancangan database relasional yang lengkap, mulai dari analisis kebutuhan, normalisasi, ERD, DDL, DML, query pengujian, view, stored procedure, function, trigger, hingga database dump.
+Sistem ini berfokus pada kekuatan logika di tingkat database relasional menggunakan **MySQL** (Stored Procedure, View, Trigger, Function) yang diintegrasikan secara *Type-Safe* (TypeScript) ke aplikasi web modern berbasis **Express.js API** (Backend) dan **Next.js App Router** (Frontend).
 
-## Latar Belakang
+---
 
-Industri perhotelan merupakan salah satu sektor jasa yang terus berkembang seiring meningkatnya mobilitas masyarakat dan kebutuhan akomodasi. Dalam operasional hotel, pengelolaan data reservasi kamar, data tamu, pembayaran, check-in, check-out, serta penggunaan fasilitas menjadi aspek yang sangat penting untuk menjamin pelayanan yang efektif dan efisien.
+## Evolusi Fitur: V1 hingga V6-HyperScale
 
-Pengelolaan data secara manual berpotensi menimbulkan berbagai permasalahan, seperti kesalahan pencatatan reservasi, duplikasi data tamu, kesulitan dalam memantau ketersediaan kamar, hingga keterlambatan dalam penyusunan laporan operasional hotel. Oleh karena itu, diperlukan suatu sistem basis data yang mampu mengintegrasikan seluruh data operasional hotel secara terstruktur dan konsisten.
+Aplikasi ini telah melalui lima iterasi besar hingga mencapai skalabilitas *Enterprise*:
 
-Sistem Reservasi Hotel merupakan solusi yang dapat digunakan untuk mengelola informasi kamar, tamu, reservasi, pembayaran, penggunaan fasilitas, serta proses check-in dan check-out secara terpusat. Dengan penerapan basis data relasional, data dapat disimpan secara terorganisasi, meminimalkan redundansi, menjaga integritas data, serta memudahkan proses pengolahan informasi.
-Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem Basis Data Reservasi Hotel sebagai penerapan konsep basis data relasional yang telah dipelajari selama perkuliahan.
+### 🛡️ Versi Standar (V1 & V2): Fondasi & Dashboard Analitik
+- **Peta Kamar Interaktif**: Dashboard grid status kamar hotel secara real-time dengan logika warna dinamis (Tersedia, Terisi, Dipesan, Perawatan).
+- **Walk-In Check-In & Check-Out Cepat**: Otomatisasi status kamar fisik menjadi `Terisi` / `Tersedia` serta manipulasi status reservasi terintegrasi melalui *Trigger Database*.
+- **Proteksi Kamar Perawatan**: Sistem secara otomatis mencegah dan menonaktifkan proses reservasi ganda.
+- **Dashboard Analitik Admin**: Grafik tren omset bulanan, penayangan kartu KPI visual (Total Omset, Kamar Terlaris, Rasio Okupansi), dan evaluasi produktivitas staf operasional berbasis *View SQL*.
 
-## Rumusan Masalah
+### 🔐 Autentikasi JWT & Keamanan (V3)
+- **Role-Based Access Control (RBAC)**: Pemisahan otorisasi ketat antara Resepsionis, Admin, dan sistem Housekeeping.
+- **Middleware Proteksi Ekstra**: Seluruh endpoint RESTful API dikawal oleh JSON Web Token (JWT) tersandikan menggunakan algoritma `bcrypt`.
+- **Halaman Login Sentral**: Menjaga integritas data komersial hotel dari akses pihak tak berwenang.
 
-1.	Bagaimana merancang sistem basis data yang mampu mengelola proses reservasi hotel secara terintegrasi?
-2.	Bagaimana membangun model data yang sesuai dengan kebutuhan operasional hotel?
-3.	Bagaimana menerapkan normalisasi hingga bentuk normal ketiga (3NF)?
-4.	Bagaimana mengimplementasikan basis data menggunakan DBMS relasional?
-5.	Bagaimana membuat query, view, function, procedure, dan trigger untuk mendukung operasional hotel?
+### 🧹 Modul Otomasi Housekeeping (V4)
+- **Otomasi Status Kotor**: Sistem *Event-Driven* via Trigger Database yang secara instan mendegradasi status kamar menjadi `Kotor` sesaat setelah tamu melakukan Check-Out.
+- **Antrean Tugas (*Task Queue*) Housekeeping**: Alur tugas staf kebersihan yang tercatat rapi dari status `Pending`, di-klaim menjadi `In_Progress`, dan dikembalikan menjadi `Tersedia` saat `Completed`.
+- **Layar Housekeeping Mandiri**: Antarmuka responsif khusus untuk staf kebersihan mengelola status pencucian dan penataan kamar.
 
-## Tujuan Project
+### 🚀 PMS Ultimate Edition (V5)
+- **CMS Menu Restoran Multi-Kategori**: Dasbor Admin spesialis pengelola menu F&B, mendukung tipe `MAKANAN`, `MINUMAN`, `DESSERT`, dilengkapi fitur *toggle* dinamis Ketersediaan Stok (*Out of Stock Firewall*).
+- **Keranjang Pesanan Terpadu (*Charge-to-Room*)**: Antarmuka digital menu makanan (restoran) yang langsung ditagihkan kepada tagihan akhir penghuni kamar (Lobi -> Kamar).
+- **Sistem Biaya Tambahan Berbasis Aturan (*Rule-Based Ancillary Charges*)**: Layanan ekstra yang adaptif. Mendukung logika tagihan `PER_JAM` (contoh: *Late Check-Out*), `PER_HARI` (Sewa Kasur / *Extrabed*), dan `PER_SEKALI_AKSI` (Pembersihan Ekstra).
+- **Smart Multiplier UI**: Label input angka pada dasbor resepsionis secara ajaib akan beradaptasi antara "Jam" atau "Hari" tergantung tipe *charge* layanan tambahan yang dipilih.
+- **Composite Billing Calculation**: SQL Agregasi Kompleks (pada titik Check-Out) yang secara matematis meleburkan: (1) Total Biaya Sewa Kamar, (2) Total Pesanan F&B Restoran, dan (3) Dinamika Biaya Layanan Tambahan ke dalam satu *Grand Total* final tanpa *gap* angka sepeserpun.
 
-1.  Merancang sistem basis data reservasi hotel yang terstruktur dan terintegrasi.
-2.  Membuat Entity Relationship Diagram (ERD) dan skema relasional.
-3.  Menerapkan proses normalisasi hingga Third Normal Form (3NF).
-4.  Mengimplementasikan basis data menggunakan SQL.
-5.  Membuat query dan objek basis data lanjutan untuk mendukung pengelolaan hotel.
+### 🎨 Visual Architecture & UI Design (Neobrutalism Styling)
+- **High-Contrast Typography & Colors**: Penggunaan warna latar krem redup (`#fdfbf7`) yang dibenturkan dengan aksen warna solid (kuning tajam, biru kobalt, merah pekat) untuk mengarahkan fokus mata pengguna (resepsionis) secara instan ke area-area vital (kamar terisi, kotor, atau pesanan layanan ekstra).
+- **Thick Borders & Hard Shadows**: Meninggalkan gaya *flat* dan *soft drop-shadow* modern demi menghadirkan garis tepi hitam tebal (`border-4 border-black`) dan bayangan solid tanpa-blur (`shadow-[4px_4px_0_0_#000]`). Keputusan desain ini melahirkan nuansa struktural layaknya mesin kasir mekanik bergaya retro-digital yang meningkatkan *tactile feel* atau kesan nyata saat berinteraksi dengan tombol aksi.
+- **Cognitive Load Reduction**: Alih-alih membuat elemen terlihat menyatu, aliran Neobrutalism menonjolkan sekat pemisah antar blok informasi secara ekstrem. Hal ini krusial pada skenario operasional hotel yang sibuk, karena batas tegas antar komponen (seperti tabel tagihan vs form check-in) secara drastis mengurangi probabilitas *human error* saat staf melakukan input dan membaca status data.
+- **Horizontal Neobrutalist Filter Control Bar**: Komponen penapisan data kamar tingkat atas (Lantai, Tipe, Status) pada Dashboard Utama. Dibangun dengan CSS statis (`appearance-none` & panah SVG kustom) untuk memitigasi isu *overflow* asimetris pada render dropdown *browser*, menjaga integritas visual kaku Neobrutalism tetap presisi meski data skala besar.
 
-## Manfaat
+### 🛡️ PMS Enterprise Ultimate & Forensic Analytics (V6-HyperScale)
+- **Agregasi Finansial Harian (Night Audit)**: Simulasi endpoint penutupan buku harian finansial hotel yang secara ACID merekonsiliasi total billing Kamar, Restoran, dan Layanan Ekstra.
+- **Visual Analytics (Neobrutalism Recharts)**: Visualisasi interaktif grafik garis okupansi harian & grafik lingkaran (Pie Chart) segmentasi omset operasional dengan gaya Neobrutalism menggunakan library Recharts.
+- **Forensic Timeline (Live Audit Trail)**: Pelacakan riwayat aktivitas staf secara real-time dengan kode warna yang berani (Hijau: Check-in, Merah: Check-out, Kuning: Layanan Ekstra, Ungu: Night Audit).
 
-a. Bagi Hotel
+## 🛡️ Database Traceability Matrix & Compliance Validation
 
-Pembuatan Sistem Basis Data Reservasi Hotel ini diharapkan dapat memberikan manfaat bagi berbagai pihak. Bagi pihak hotel, sistem ini dapat membantu dalam mengelola data operasional secara lebih efektif dan terstruktur, mulai dari pengelolaan data tamu, reservasi kamar, pembayaran, hingga penggunaan fasilitas hotel. Dengan adanya sistem basis data yang terintegrasi, proses pencatatan dan pencarian informasi dapat dilakukan dengan lebih cepat sehingga dapat meningkatkan kualitas pelayanan kepada pelanggan serta mengurangi risiko kesalahan pengolahan data.
+Hasil audit ketertelusuran arsitektur relasi database (DDL, DML, Triggers, Views, Stored Procedures) MySQL terhadap kode website Express.js backend & Next.js frontend:
 
-b. Bagi Pengguna
+| Komponen Database | Tipe Komponen | Berkas Terkait di Repositori | Status Sinkronisasi |
+| :--- | :--- | :--- | :--- |
+| `tamu`, `pegawai`, `kamar`, `tipe_kamar`, `fasilitas`, `kamar_fasilitas`, `reservasi`, `detail_reservasi`, `pembayaran`, `checkin`, `checkout`, `log_aktivitas` | Tabel Utama (V1-V2) | [schema.prisma](file:///d:/Website/Hotel_Reservation_System/backend/prisma/schema.prisma) | **100% Sinkron** |
+| `menu_restoran`, `pesanan_restoran`, `tugas_housekeeping`, `layanan_tambahan`, `detail_layanan_kamar` | Tabel Baru (V3-V5) | [schema.prisma](file:///d:/Website/Hotel_Reservation_System/backend/prisma/schema.prisma) | **100% Sinkron** |
+| `vw_status_kamar_opsional` | SQL View (Real-time Room) | [dashboard.controller.ts](file:///d:/Website/Hotel_Reservation_System/backend/src/controllers/dashboard.controller.ts) | **100% Sinkron** |
+| `vw_performa_staf_operasional` | SQL View (Staff KPI) | [admin.controller.ts](file:///d:/Website/Hotel_Reservation_System/backend/src/controllers/admin.controller.ts) | **100% Sinkron** |
+| `sp_proses_pembayaran_aman` | Stored Procedure (ACID Check) | [reservasi.controller.ts](file:///d:/Website/Hotel_Reservation_System/backend/src/controllers/reservasi.controller.ts) | **100% Sinkron** |
+| `trg_after_checkin` | Database Trigger (Occupied Rooms) | MySQL Server (DDL 01) | **100% Aktif** |
+| `trg_after_checkout_insert` | Database Trigger (Dirty Rooms) | MySQL Server (DDL 09) | **100% Aktif** |
+| `02_dml.sql` | Dummy SQL Data Seeding | [update-db-services.ts](file:///d:/Website/Hotel_Reservation_System/backend/src/update-db-services.ts) | **100% Terpopulasi** |
 
-Bagi pengguna atau tamu hotel, sistem ini memberikan kemudahan dalam proses reservasi dan memperoleh informasi terkait kamar maupun fasilitas yang tersedia. Selain itu, data transaksi dan riwayat pemesanan dapat terdokumentasi dengan baik sehingga meningkatkan kenyamanan dan kepercayaan pelanggan terhadap layanan hotel.
+---
 
-c. Bagi Mahasiswa
-
-Bagi mahasiswa sebagai pengembang sistem, project ini menjadi sarana untuk menerapkan konsep-konsep basis data yang telah dipelajari selama perkuliahan, seperti analisis kebutuhan, perancangan Entity Relationship Diagram (ERD), normalisasi data, implementasi basis data relasional, serta pembuatan query dan objek basis data lanjutan. Melalui project ini, mahasiswa juga dapat mengembangkan kemampuan pemecahan masalah, kerja sama tim, dan dokumentasi teknis yang akan bermanfaat dalam dunia kerja maupun pengembangan sistem informasi di masa mendatang.
-
-## Fitur Sistem
-
-- Kelola data tamu, pegawai, tipe kamar, kamar hotel, dan fasilitas kamar.
-- Kelola reservasi kamar beserta detail kamar yang dipesan.
-- Kelola pembayaran reservasi dengan metode pembayaran yang dibatasi oleh ENUM.
-- Kelola proses check-in dan check-out tamu.
-- Kelola log aktivitas sistem untuk mencatat aktivitas penting.
-- Pencegahan double booking kamar berdasarkan periode tanggal reservasi yang bertabrakan.
-- Validasi kamar berstatus `Perawatan` agar tidak dapat dipesan.
-- Perubahan status kamar otomatis dari `Tersedia`, `Dipesan`, `Terisi`, hingga kembali `Tersedia`.
-- Laporan detail reservasi tamu.
-- Laporan pembayaran.
-- Stored procedure untuk menghitung total reservasi.
-- Function untuk menghitung total biaya.
-- Trigger untuk validasi reservasi, perubahan status kamar, dan pencatatan aktivitas pembayaran.
-
-## Aturan Bisnis Utama
-
-- Kamar yang sudah memiliki reservasi aktif pada periode tanggal tertentu tidak dapat dipesan kembali jika periode tanggalnya bertabrakan.
-- Kamar dengan status `Perawatan` tidak dapat dimasukkan ke detail reservasi.
-- Saat kamar dimasukkan ke detail reservasi, status kamar berubah menjadi `Dipesan` jika sebelumnya `Tersedia`.
-- Saat tamu melakukan check-in, status kamar pada reservasi tersebut berubah menjadi `Terisi`.
-- Saat tamu melakukan check-out, status kamar pada reservasi tersebut kembali menjadi `Tersedia` selama kamar tidak sedang `Perawatan`.
-- Reservasi berstatus `Dibatalkan` tidak dihitung sebagai konflik dalam pengecekan double booking.
-
-## Aktor Sistem
-
-| Aktor | Deskripsi |
-|---|---|
-| Tamu | Melakukan reservasi, menginap, dan melakukan pembayaran. |
-| Resepsionis | Mengelola reservasi, check-in, dan check-out. |
-| Kasir | Mencatat pembayaran tamu. |
-| Supervisor | Memantau laporan reservasi, pembayaran, status kamar, dan aktivitas sistem. |
-
-## Daftar Tabel
-
-| No | Nama Tabel | Deskripsi |
-|---:|---|---|
-| 1 | `tamu` | Menyimpan data identitas tamu. |
-| 2 | `pegawai` | Menyimpan data pegawai hotel. |
-| 3 | `tipe_kamar` | Menyimpan kategori kamar dan harga per malam. |
-| 4 | `fasilitas` | Menyimpan data fasilitas hotel. |
-| 5 | `kamar` | Menyimpan data kamar fisik hotel. |
-| 6 | `reservasi` | Menyimpan transaksi reservasi. |
-| 7 | `detail_reservasi` | Menyimpan rincian kamar pada reservasi. |
-| 8 | `pembayaran` | Menyimpan data pembayaran reservasi. |
-| 9 | `checkin` | Menyimpan data realisasi check-in. |
-| 10 | `checkout` | Menyimpan data realisasi check-out. |
-| 11 | `kamar_fasilitas` | Menyimpan relasi kamar dan fasilitas. |
-| 12 | `log_aktivitas` | Menyimpan catatan aktivitas sistem. |
-
-## ERD
-
-ERD menggunakan notasi Crow's Foot dan tersedia pada folder:
-
-- `erd/ERD_CrowFoot.mmd`
-- `erd/ERD_CrowFoot.drawio`
-
-Relasi utama:
-
-- `tamu` ke `reservasi`: 1:M
-- `pegawai` ke `reservasi`: 1:M
-- `pegawai` ke `checkin`: 1:M
-- `pegawai` ke `checkout`: 1:M
-- `pegawai` ke `log_aktivitas`: 1:M
-- `tipe_kamar` ke `kamar`: 1:M
-- `reservasi` ke `detail_reservasi`: 1:M
-- `kamar` ke `detail_reservasi`: 1:M
-- `reservasi` ke `pembayaran`: 1:M
-- `reservasi` ke `checkin`: 1:0..1
-- `reservasi` ke `checkout`: 1:0..1
-- `kamar` ke `fasilitas`: M:N melalui `kamar_fasilitas`
-
-ERD utama hanya menampilkan tabel fisik dan relasi database. View dan trigger didokumentasikan terpisah pada bagian implementasi SQL karena bukan entitas utama pada ERD.
-
-## Struktur Folder
+## Struktur Folder Proyek
 
 ```text
 Hotel_Reservation_System/
 |-- README.md
-|-- .gitignore
-|-- docs/
-|   |-- proposal/
-|   |-- laporan/
-|   |-- presentasi/
-|   |-- normalization/
-|   `-- video_demo/
-|-- erd/
+|-- package.json
 |-- database/
-|   |-- ddl/
-|   |-- dml/
-|   |-- query/
-|   |-- view/
-|   |-- procedure/
-|   |-- trigger/
-|   |-- function/
-|   `-- dump/
-|-- normalization/
-|-- data_dictionary/
-|-- sample_data/
-`-- assets/
-    |-- logo/
-    |-- screenshot/
-    `-- diagram/
+|   |-- ddl/01_ddl.sql
+|   |-- dml/02_dml.sql
+|   |-- query/03_query.sql
+|   |-- view/04_view.sql
+|   |-- procedure/05_procedure.sql
+|   |-- trigger/06_trigger.sql
+|   |-- function/07_function.sql
+|   `-- dump/pms_ultimate_final.sql (Berkas Akhir)
+|-- backend/ (Express.js API)
+|   |-- src/
+|   |   |-- controllers/ (auth, reservasi, dashboard, admin, restoran, layanan)
+|   |   |-- middleware/ (auth.middleware.ts)
+|   |   |-- routes/api.routes.ts
+|   |   |-- server.ts
+|   |-- prisma/schema.prisma
+|   |-- .env
+|   `-- package.json
+`-- frontend/ (Next.js Application)
+    |-- src/
+    |   `-- app/
+    |       |-- login/page.tsx (Pintu Gerbang RBAC)
+    |       |-- admin/page.tsx (Laporan KPI)
+    |       |-- admin/restoran/page.tsx (CMS Restoran)
+    |       |-- restoran/page.tsx (Point of Sales Restoran)
+    |       |-- housekeeping/page.tsx (Sistem Antrean Tugas)
+    |       |-- page.tsx (Dashboard Resepsionis Utama)
+    |       `-- globals.css
+    `-- package.json
 ```
 
-## Teknologi yang Digunakan
+---
 
-- MySQL 8.0
-- MySQL Workbench
-- Mermaid ERD
-- Markdown
-- CSV sample data
+## Cara Setup & Instalasi
 
-## Cara Instalasi
+### 1. Kloning Repositori & Install Runner
+1. Kloning repositori proyek ini ke komputer lokal Anda.
+2. Di direktori utama proyek (`Hotel_Reservation_System`), pasang modul otomasi:
+   ```bash
+   npm install
+   ```
 
-1. Pastikan MySQL Server dan MySQL Workbench sudah terpasang.
-2. Clone atau salin folder project ke komputer lokal.
-3. Buka MySQL Workbench.
-4. Buat koneksi ke MySQL Server.
-5. Jalankan script SQL sesuai urutan pada bagian berikutnya.
+### 2. Setup Database
+1. Pastikan server MySQL Anda aktif.
+2. Jika Anda ingin melakukan instalasi 1-klik, jalankan berkas pembuangan skema database final V5-Ultimate:
+   ```sql
+   SOURCE database/dump/pms_ultimate_final.sql;
+   ```
 
-## Cara Menjalankan Script SQL
+### 3. Setup Backend & Prisma ORM
+1. Masuk ke direktori `backend` dan jalankan instalasi:
+   ```bash
+   cd backend
+   npm install
+   ```
+2. Buat file `.env` di dalam folder `backend/` dan masukkan URL koneksi database MySQL Anda:
+   ```ini
+   DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/hotel_reservation_db"
+   PORT=3002
+   JWT_SECRET="RahasiaSuperAman123!"
+   ```
+3. Generate Prisma client (Pastikan telah melakukan introspeksi):
+   ```bash
+   npx prisma db pull
+   npx prisma generate
+   ```
 
-Jalankan file SQL secara berurutan:
+### 4. Setup Frontend
+1. Masuk ke direktori `frontend`:
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
-```sql
-SOURCE database/ddl/01_ddl.sql;
-SOURCE database/dml/02_dml.sql;
-SOURCE database/view/04_view.sql;
-SOURCE database/procedure/05_procedure.sql;
-SOURCE database/trigger/06_trigger.sql;
-SOURCE database/function/07_function.sql;
-SOURCE database/query/03_query.sql;
-```
+---
 
-Jika menggunakan MySQL Workbench, buka setiap file SQL dan tekan tombol Execute sesuai urutan tersebut.
+## Cara Menjalankan Aplikasi
 
-## Cara Restore Database Dump
-
-Database dump tersedia pada:
-
-```text
-database/dump/hotel_reservation_dump.sql
-```
-
-Cara restore melalui MySQL Workbench:
-
-1. Buka MySQL Workbench.
-2. Pilih menu `Server`.
-3. Pilih `Data Import`.
-4. Pilih opsi import dari file dump.
-5. Pilih file `hotel_reservation_dump.sql`.
-6. Jalankan proses import sampai selesai.
-
-Cara restore melalui terminal:
+Anda cukup menjalankan satu perintah sakti ini di **akar direktori utama proyek** (`Hotel_Reservation_System`):
 
 ```bash
-mysql -u root -p < database/dump/hotel_reservation_dump.sql
+npm run dev
 ```
 
-## Cara Verifikasi Hasil
+Script ini akan secara otomatis mengaktifkan:
+- **Backend API**: Berjalan di `http://localhost:3002`
+- **Frontend Next.js**: Berjalan di `http://localhost:3003`
 
-Setelah seluruh script dijalankan, lakukan verifikasi berikut:
+Buka browser Anda dan akses **`http://localhost:3003`** untuk membuka Pintu Gerbang Sistem. Login menggunakan kredensial **superadmin@hotel.com** / **password123**.
 
-```sql
-SELECT COUNT(*) FROM tamu;
-SELECT COUNT(*) FROM reservasi;
-SELECT * FROM vw_detail_reservasi_tamu;
-CALL sp_hitung_total_reservasi(1, @total);
-SELECT @total AS total_biaya_reservasi;
-SELECT fn_hitung_total_biaya(350000, 2) AS total_biaya;
-SELECT * FROM log_aktivitas ORDER BY waktu_aktivitas DESC;
-```
-
-## Daftar File Penting
-
-| File | Fungsi |
-|---|---|
-| `database/ddl/01_ddl.sql` | Membuat database dan seluruh tabel. |
-| `database/dml/02_dml.sql` | Mengisi data dummy realistis. |
-| `database/query/03_query.sql` | Menguji query sederhana, join, subquery/CTE, dan agregasi. |
-| `database/view/04_view.sql` | Membuat view laporan. |
-| `database/procedure/05_procedure.sql` | Membuat stored procedure. |
-| `database/trigger/06_trigger.sql` | Membuat trigger anti double booking, validasi kamar perawatan, perubahan status kamar, dan log pembayaran. |
-| `database/function/07_function.sql` | Membuat function perhitungan biaya. |
-| `database/dump/hotel_reservation_dump.sql` | File dump database. |
-| `erd/ERD_CrowFoot.mmd` | ERD dalam format Mermaid. |
-| `data_dictionary/Data_Dictionary.md` | Dokumentasi kamus data. |
-| `docs/laporan/Laporan_Project.md` | Laporan akhir project. |
-
-## Screenshot Sistem
-
-Screenshot hasil implementasi dapat disimpan pada folder:
-
-```text
-assets/screenshot/
-```
-
-Jenis screenshot yang direkomendasikan:
-
-- Reverse Engineering ERD dari MySQL Workbench.
-- Hasil eksekusi query sederhana.
-- Hasil query join.
-- Hasil view laporan reservasi.
-- Hasil procedure, function, dan trigger.
-
-## Kontributor / Anggota Kelompok
-
-| Nama | NIM | Peran | Tanggung Jawab |
-|---|---|---|---|
-| NAMA_ANGGOTA_1 | NIM_ANGGOTA_1 | Database Designer | Merancang ERD, relasi, dan normalisasi. |
-| ABDURRAHMAN YUSUF | K1D024058 | SQL Developer | Menyusun DDL, DML, query, view, procedure, function, dan trigger. |
-| NAMA_ANGGOTA_3 | NIM_ANGGOTA_3 | Documentation Writer | Menyusun proposal, laporan, data dictionary, dan README. |
-| NAMA_ANGGOTA_4 | NIM_ANGGOTA_4 | Tester | Menguji script SQL dan validasi hasil query. |
+---
 
 ## Lisensi
 
-Project ini digunakan untuk keperluan akademik dan pembelajaran. Seluruh script dan dokumentasi dapat dikembangkan kembali untuk kebutuhan studi, portofolio, atau penelitian dengan tetap mencantumkan konteks penggunaan secara etis.
-
-## Kesimpulan
-
-Hotel Reservation System berhasil merepresentasikan proses utama reservasi hotel dalam bentuk database relasional. Database telah dirancang dengan 12 tabel, relasi primary key dan foreign key, constraint integritas data, data dummy realistis, query pengujian, view, stored procedure, function, trigger, ERD, dan dokumentasi pendukung. Project ini siap digunakan sebagai bahan laporan, presentasi, dan publikasi repository GitHub.
+Project ini digunakan untuk keperluan akademik tingkat lanjut (V5) di bawah lisensi terbuka institusi terkait. Bebas dimodifikasi dengan pengakuan kredit (Zero-Error Type Safety Architectural Standard).

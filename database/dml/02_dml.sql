@@ -1,50 +1,47 @@
 USE hotel_reservation_db;
 
 -- =========================================================
--- DML DATA DUMMY SISTEM RESERVASI HOTEL
--- DBMS: MySQL 8.0
--- Catatan:
--- Jalankan file ini setelah menjalankan database/ddl/01_ddl.sql.
--- Data dibuat realistis dan disusun sesuai urutan foreign key.
+-- DML DATA DUMMY SISTEM RESERVASI HOTEL PRO
+-- DBMS: MySQL 8.0 / 8.4
 -- =========================================================
 
--- INSERT DATA TAMU
-INSERT INTO tamu (id_tamu, nama_tamu, no_identitas, jenis_kelamin, no_telepon, email, alamat) VALUES
-(1, 'Andi Pratama', '3174010101900001', 'Laki-laki', '081234567801', 'andi.pratama@example.com', 'Jl. Melati No. 10, Jakarta'),
-(2, 'Siti Rahmawati', '3273024502920002', 'Perempuan', '081234567802', 'siti.rahmawati@example.com', 'Jl. Braga No. 25, Bandung'),
-(3, 'Budi Santoso', '3578011203880003', 'Laki-laki', '081234567803', 'budi.santoso@example.com', 'Jl. Diponegoro No. 8, Surabaya'),
-(4, 'Dewi Lestari', '3374015204950004', 'Perempuan', '081234567804', 'dewi.lestari@example.com', 'Jl. Malioboro No. 15, Yogyakarta'),
-(5, 'Rizky Ramadhan', '3671011804960005', 'Laki-laki', '081234567805', 'rizky.ramadhan@example.com', 'Jl. Sudirman No. 21, Tangerang'),
-(6, 'Nadia Putri', '3175026107980006', 'Perempuan', '081234567806', 'nadia.putri@example.com', 'Jl. Ahmad Yani No. 9, Bekasi'),
-(7, 'Hendra Wijaya', '3471042206870007', 'Laki-laki', '081234567807', 'hendra.wijaya@example.com', 'Jl. Gejayan No. 12, Yogyakarta'),
-(8, 'Maya Sari', '7371015403910008', 'Perempuan', '081234567808', 'maya.sari@example.com', 'Jl. Pengayoman No. 18, Makassar'),
-(9, 'Arief Nugraha', '3276010712860009', 'Laki-laki', '081234567809', 'arief.nugraha@example.com', 'Jl. Margonda Raya No. 30, Depok'),
-(10, 'Lina Marlina', '3573024405900010', 'Perempuan', '081234567810', 'lina.marlina@example.com', 'Jl. Veteran No. 5, Malang'),
-(11, 'Fauzan Akbar', '6471011504890011', 'Laki-laki', '081234567811', 'fauzan.akbar@example.com', 'Jl. Mulawarman No. 7, Balikpapan'),
-(12, 'Intan Permata', '5171015807940012', 'Perempuan', '081234567812', 'intan.permata@example.com', 'Jl. Teuku Umar No. 16, Denpasar'),
-(13, 'Yoga Saputra', '1371012003930013', 'Laki-laki', '081234567813', 'yoga.saputra@example.com', 'Jl. Khatib Sulaiman No. 11, Padang'),
-(14, 'Putri Amelia', '1275016302970014', 'Perempuan', '081234567814', 'putri.amelia@example.com', 'Jl. Sisingamangaraja No. 22, Medan'),
-(15, 'Agus Setiawan', '1671010505850015', 'Laki-laki', '081234567815', 'agus.setiawan@example.com', 'Jl. Basuki Rahmat No. 3, Palembang'),
-(16, 'Citra Anjani', '3372014701990016', 'Perempuan', '081234567816', 'citra.anjani@example.com', 'Jl. Slamet Riyadi No. 40, Solo'),
-(17, 'Dimas Arya', '3674022607920017', 'Laki-laki', '081234567817', 'dimas.arya@example.com', 'Jl. Serpong Raya No. 19, Tangerang Selatan'),
-(18, 'Rani Maharani', '3271016806880018', 'Perempuan', '081234567818', 'rani.maharani@example.com', 'Jl. Asia Afrika No. 14, Bandung'),
-(19, 'Teguh Firmansyah', '3173030901840019', 'Laki-laki', '081234567819', 'teguh.firmansyah@example.com', 'Jl. Gatot Subroto No. 28, Jakarta'),
-(20, 'Selvi Oktaviani', '3673015709960020', 'Perempuan', '081234567820', 'selvi.oktaviani@example.com', 'Jl. Imam Bonjol No. 6, Serang');
+-- 1. INSERT DATA TAMU (Termasuk flag is_active)
+INSERT INTO tamu (id_tamu, nama_tamu, no_identitas, jenis_kelamin, no_telepon, email, alamat, is_active) VALUES
+(1, 'Andi Pratama', '1001', 'Laki-laki', '081234567801', 'andi.pratama@example.com', 'Jl. Melati No. 10, Jakarta', 1),
+(2, 'Siti Rahmawati', '1002', 'Perempuan', '081234567802', 'siti.rahmawati@example.com', 'Jl. Braga No. 25, Bandung', 1),
+(3, 'Budi Santoso', '1003', 'Laki-laki', '081234567803', 'budi.santoso@example.com', 'Jl. Diponegoro No. 8, Surabaya', 1),
+(4, 'Dewi Lestari', '1004', 'Perempuan', '081234567804', 'dewi.lestari@example.com', 'Jl. Malioboro No. 15, Yogyakarta', 1),
+(5, 'Rizky Ramadhan', '1005', 'Laki-laki', '081234567805', 'rizky.ramadhan@example.com', 'Jl. Sudirman No. 21, Tangerang', 1),
+(6, 'Nadia Putri', '1006', 'Perempuan', '081234567806', 'nadia.putri@example.com', 'Jl. Ahmad Yani No. 9, Bekasi', 1),
+(7, 'Hendra Wijaya', '1007', 'Laki-laki', '081234567807', 'hendra.wijaya@example.com', 'Jl. Gejayan No. 12, Yogyakarta', 1),
+(8, 'Maya Sari', '1008', 'Perempuan', '081234567808', 'maya.sari@example.com', 'Jl. Pengayoman No. 18, Makassar', 1),
+(9, 'Arief Nugraha', '1009', 'Laki-laki', '081234567809', 'arief.nugraha@example.com', 'Jl. Margonda Raya No. 30, Depok', 1),
+(10, 'Lina Marlina', '1010', 'Perempuan', '081234567810', 'lina.marlina@example.com', 'Jl. Veteran No. 5, Malang', 1),
+(11, 'Fauzan Akbar', '1011', 'Laki-laki', '081234567811', 'fauzan.akbar@example.com', 'Jl. Mulawarman No. 7, Balikpapan', 1),
+(12, 'Intan Permata', '1012', 'Perempuan', '081234567812', 'intan.permata@example.com', 'Jl. Teuku Umar No. 16, Denpasar', 1),
+(13, 'Yoga Saputra', '1013', 'Laki-laki', '081234567813', 'yoga.saputra@example.com', 'Jl. Khatib Sulaiman No. 11, Padang', 1),
+(14, 'Putri Amelia', '1014', 'Perempuan', '081234567814', 'putri.amelia@example.com', 'Jl. Sisingamangaraja No. 22, Medan', 1),
+(15, 'Agus Setiawan', '1015', 'Laki-laki', '081234567815', 'agus.setiawan@example.com', 'Jl. Basuki Rahmat No. 3, Palembang', 1),
+(16, 'Citra Anjani', '1016', 'Perempuan', '081234567816', 'citra.anjani@example.com', 'Jl. Slamet Riyadi No. 40, Solo', 1),
+(17, 'Dimas Arya', '1017', 'Laki-laki', '081234567817', 'dimas.arya@example.com', 'Jl. Serpong Raya No. 19, Tangerang Selatan', 1),
+(18, 'Rani Maharani', '1018', 'Perempuan', '081234567818', 'rani.maharani@example.com', 'Jl. Asia Afrika No. 14, Bandung', 1),
+(19, 'Teguh Firmansyah', '1019', 'Laki-laki', '081234567819', 'teguh.firmansyah@example.com', 'Jl. Gatot Subroto No. 28, Jakarta', 1),
+(20, 'Selvi Oktaviani', '1020', 'Perempuan', '081234567820', 'selvi.oktaviani@example.com', 'Jl. Imam Bonjol No. 6, Serang', 1);
 
--- INSERT DATA PEGAWAI
-INSERT INTO pegawai (id_pegawai, nama_pegawai, jabatan, no_telepon, email) VALUES
-(1, 'Rina Kartika', 'Resepsionis', '081300000001', 'rina.kartika@hotel.local'),
-(2, 'Fajar Nugroho', 'Supervisor Front Office', '081300000002', 'fajar.nugroho@hotel.local'),
-(3, 'Maya Puspita', 'Kasir', '081300000003', 'maya.puspita@hotel.local'),
-(4, 'Doni Saputra', 'Resepsionis', '081300000004', 'doni.saputra@hotel.local'),
-(5, 'Ayu Wulandari', 'Housekeeping', '081300000005', 'ayu.wulandari@hotel.local'),
-(6, 'Bagus Prakoso', 'Manager Operasional', '081300000006', 'bagus.prakoso@hotel.local'),
-(7, 'Nina Herlina', 'Customer Service', '081300000007', 'nina.herlina@hotel.local'),
-(8, 'Rafael Aditya', 'Night Auditor', '081300000008', 'rafael.aditya@hotel.local'),
-(9, 'Salsa Kirana', 'Kasir', '081300000009', 'salsa.kirana@hotel.local'),
-(10, 'Wahyu Hidayat', 'Bellboy', '081300000010', 'wahyu.hidayat@hotel.local');
+-- 2. INSERT DATA PEGAWAI (Termasuk flag is_active)
+INSERT INTO pegawai (id_pegawai, nama_pegawai, jabatan, no_telepon, email, is_active) VALUES
+(1, 'Rina Kartika', 'Resepsionis', '081300000001', 'rina.kartika@hotel.local', 1),
+(2, 'Fajar Nugroho', 'Supervisor Front Office', '081300000002', 'fajar.nugroho@hotel.local', 1),
+(3, 'Maya Puspita', 'Kasir', '081300000003', 'maya.puspita@hotel.local', 1),
+(4, 'Doni Saputra', 'Resepsionis', '081300000004', 'doni.saputra@hotel.local', 1),
+(5, 'Ayu Wulandari', 'Housekeeping', '081300000005', 'ayu.wulandari@hotel.local', 1),
+(6, 'Bagus Prakoso', 'Manager Operasional', '081300000006', 'bagus.prakoso@hotel.local', 1),
+(7, 'Nina Herlina', 'Customer Service', '081300000007', 'nina.herlina@hotel.local', 1),
+(8, 'Rafael Aditya', 'Night Auditor', '081300000008', 'rafael.aditya@hotel.local', 1),
+(9, 'Salsa Kirana', 'Kasir', '081300000009', 'salsa.kirana@hotel.local', 1),
+(10, 'Wahyu Hidayat', 'Bellboy', '081300000010', 'wahyu.hidayat@hotel.local', 1);
 
--- INSERT DATA TIPE KAMAR
+-- 3. INSERT DATA TIPE KAMAR
 INSERT INTO tipe_kamar (id_tipe_kamar, nama_tipe, kapasitas, harga_per_malam, deskripsi) VALUES
 (1, 'Standard', 2, 350000.00, 'Kamar standar untuk tamu individu atau pasangan dengan fasilitas dasar.'),
 (2, 'Superior', 2, 450000.00, 'Kamar superior dengan area lebih luas dan fasilitas tambahan.'),
@@ -52,7 +49,7 @@ INSERT INTO tipe_kamar (id_tipe_kamar, nama_tipe, kapasitas, harga_per_malam, de
 (4, 'Family', 4, 850000.00, 'Kamar keluarga dengan kapasitas lebih besar.'),
 (5, 'Suite', 4, 1250000.00, 'Kamar suite premium dengan ruang duduk dan fasilitas lengkap.');
 
--- INSERT DATA FASILITAS
+-- 4. INSERT DATA FASILITAS
 INSERT INTO fasilitas (id_fasilitas, nama_fasilitas, deskripsi) VALUES
 (1, 'Wi-Fi', 'Akses internet nirkabel di kamar dan area hotel.'),
 (2, 'AC', 'Pendingin ruangan pribadi di dalam kamar.'),
@@ -65,7 +62,7 @@ INSERT INTO fasilitas (id_fasilitas, nama_fasilitas, deskripsi) VALUES
 (9, 'Room Service', 'Layanan pemesanan makanan dan minuman ke kamar.'),
 (10, 'Laundry', 'Layanan pencucian pakaian tamu.');
 
--- INSERT DATA KAMAR
+-- 5. INSERT DATA KAMAR
 INSERT INTO kamar (id_kamar, id_tipe_kamar, nomor_kamar, lantai, status_kamar) VALUES
 (1, 1, '101', '1', 'Tersedia'),
 (2, 1, '102', '1', 'Dipesan'),
@@ -93,86 +90,87 @@ INSERT INTO kamar (id_kamar, id_tipe_kamar, nomor_kamar, lantai, status_kamar) V
 (24, 5, '504', '5', 'Tersedia'),
 (25, 5, '505', '5', 'Dipesan');
 
--- INSERT DATA RESERVASI
+-- 6. INSERT DATA RESERVASI (Tanggal Reservasi menggunakan format DATETIME)
 INSERT INTO reservasi (id_reservasi, id_tamu, id_pegawai, tanggal_reservasi, tanggal_checkin_rencana, tanggal_checkout_rencana, status_reservasi) VALUES
-(1, 1, 1, '2026-05-01', '2026-05-10', '2026-05-12', 'Selesai'),
-(2, 2, 1, '2026-05-02', '2026-05-11', '2026-05-14', 'Selesai'),
-(3, 3, 2, '2026-05-03', '2026-05-12', '2026-05-14', 'Selesai'),
-(4, 4, 4, '2026-05-04', '2026-05-13', '2026-05-17', 'Selesai'),
-(5, 5, 7, '2026-05-05', '2026-05-15', '2026-05-17', 'Selesai'),
-(6, 6, 1, '2026-05-06', '2026-05-16', '2026-05-17', 'Selesai'),
-(7, 7, 2, '2026-05-07', '2026-05-18', '2026-05-20', 'Selesai'),
-(8, 8, 4, '2026-05-08', '2026-05-19', '2026-05-22', 'Selesai'),
-(9, 9, 7, '2026-05-09', '2026-05-20', '2026-05-22', 'Selesai'),
-(10, 10, 1, '2026-05-10', '2026-05-21', '2026-05-24', 'Selesai'),
-(11, 11, 2, '2026-05-11', '2026-06-01', '2026-06-03', 'Check-in'),
-(12, 12, 4, '2026-05-12', '2026-06-02', '2026-06-03', 'Check-in'),
-(13, 13, 7, '2026-05-13', '2026-06-05', '2026-06-08', 'Dikonfirmasi'),
-(14, 14, 1, '2026-05-14', '2026-06-06', '2026-06-08', 'Dikonfirmasi'),
-(15, 15, 2, '2026-05-15', '2026-06-09', '2026-06-13', 'Dikonfirmasi'),
-(16, 16, 4, '2026-05-16', '2026-06-10', '2026-06-12', 'Dikonfirmasi'),
-(17, 17, 7, '2026-05-17', '2026-06-12', '2026-06-13', 'Dikonfirmasi'),
-(18, 18, 1, '2026-05-18', '2026-06-14', '2026-06-16', 'Dikonfirmasi'),
-(19, 19, 2, '2026-05-19', '2026-06-17', '2026-06-20', 'Menunggu'),
-(20, 20, 4, '2026-05-20', '2026-06-18', '2026-06-20', 'Menunggu'),
-(21, 3, 7, '2026-05-21', '2026-06-21', '2026-06-23', 'Dibatalkan'),
-(22, 8, 1, '2026-05-22', '2026-06-24', '2026-06-25', 'Dikonfirmasi');
+(1, 1, 1, '2026-05-01 09:15:00', '2026-05-10', '2026-05-12', 'Selesai'),
+(2, 2, 1, '2026-05-02 10:30:00', '2026-05-11', '2026-05-14', 'Selesai'),
+(3, 3, 2, '2026-05-03 14:22:00', '2026-05-12', '2026-05-14', 'Selesai'),
+(4, 4, 4, '2026-05-04 11:05:00', '2026-05-13', '2026-05-17', 'Selesai'),
+(5, 5, 7, '2026-05-05 16:40:00', '2026-05-15', '2026-05-17', 'Selesai'),
+(6, 6, 1, '2026-05-06 08:12:00', '2026-05-16', '2026-05-17', 'Selesai'),
+(7, 7, 2, '2026-05-07 13:50:00', '2026-05-18', '2026-05-20', 'Selesai'),
+(8, 8, 4, '2026-05-08 10:15:00', '2026-05-19', '2026-05-22', 'Selesai'),
+(9, 9, 7, '2026-05-09 15:30:00', '2026-05-20', '2026-05-22', 'Selesai'),
+(10, 10, 1, '2026-05-10 11:20:00', '2026-05-21', '2026-05-24', 'Selesai'),
+(11, 11, 2, '2026-05-11 09:00:00', '2026-06-01', '2026-06-03', 'Check-in'),
+(12, 12, 4, '2026-05-12 14:45:00', '2026-06-02', '2026-06-03', 'Check-in'),
+(13, 13, 7, '2026-05-13 17:10:00', '2026-06-05', '2026-06-08', 'Dikonfirmasi'),
+(14, 14, 1, '2026-05-14 10:00:00', '2026-06-06', '2026-06-08', 'Dikonfirmasi'),
+(15, 15, 2, '2026-05-15 11:35:00', '2026-06-09', '2026-06-13', 'Dikonfirmasi'),
+(16, 16, 4, '2026-05-16 13:20:00', '2026-06-10', '2026-06-12', 'Dikonfirmasi'),
+(17, 17, 7, '2026-05-17 16:15:00', '2026-06-12', '2026-06-13', 'Dikonfirmasi'),
+(18, 18, 1, '2026-05-18 09:50:00', '2026-06-14', '2026-06-16', 'Dikonfirmasi'),
+(19, 19, 2, '2026-05-19 14:05:00', '2026-06-17', '2026-06-20', 'Menunggu'),
+(20, 20, 4, '2026-05-20 11:30:00', '2026-06-18', '2026-06-20', 'Menunggu'),
+(21, 3, 7, '2026-05-21 10:00:00', '2026-06-21', '2026-06-23', 'Dibatalkan'),
+(22, 8, 1, '2026-05-22 15:25:00', '2026-06-24', '2026-06-25', 'Dikonfirmasi');
 
--- INSERT DATA DETAIL RESERVASI
-INSERT INTO detail_reservasi (id_detail_reservasi, id_reservasi, id_kamar, jumlah_malam, harga_per_malam, subtotal) VALUES
-(1, 1, 1, 2, 350000.00, 700000.00),
-(2, 2, 6, 3, 450000.00, 1350000.00),
-(3, 3, 11, 2, 600000.00, 1200000.00),
-(4, 4, 16, 4, 850000.00, 3400000.00),
-(5, 5, 21, 2, 1250000.00, 2500000.00),
-(6, 6, 2, 1, 350000.00, 350000.00),
-(7, 6, 3, 1, 350000.00, 350000.00),
-(8, 7, 7, 2, 450000.00, 900000.00),
-(9, 8, 12, 3, 600000.00, 1800000.00),
-(10, 9, 17, 2, 850000.00, 1700000.00),
-(11, 10, 22, 3, 1250000.00, 3750000.00),
-(12, 11, 4, 2, 350000.00, 700000.00),
-(13, 11, 8, 2, 450000.00, 900000.00),
-(14, 12, 13, 1, 600000.00, 600000.00),
-(15, 13, 18, 3, 850000.00, 2550000.00),
-(16, 14, 23, 2, 1250000.00, 2500000.00),
-(17, 15, 5, 4, 350000.00, 1400000.00),
-(18, 16, 9, 2, 450000.00, 900000.00),
-(19, 16, 14, 2, 600000.00, 1200000.00),
-(20, 17, 19, 1, 850000.00, 850000.00),
-(21, 18, 24, 2, 1250000.00, 2500000.00),
-(22, 19, 10, 3, 450000.00, 1350000.00),
-(23, 20, 15, 2, 600000.00, 1200000.00),
-(24, 21, 20, 2, 850000.00, 1700000.00),
-(25, 22, 25, 1, 1250000.00, 1250000.00),
-(26, 22, 1, 1, 350000.00, 350000.00);
+-- 7. INSERT DATA DETAIL RESERVASI (Kolom subtotal dibuang karena sudah AUTO-GENERATED)
+INSERT INTO detail_reservasi (id_detail_reservasi, id_reservasi, id_kamar, jumlah_malam, harga_per_malam) VALUES
+(1, 1, 1, 2, 350000.00),
+(2, 2, 6, 3, 450000.00),
+(3, 3, 11, 2, 600000.00),
+(4, 4, 16, 4, 850000.00),
+(5, 5, 21, 2, 1250000.00),
+(6, 6, 2, 1, 350000.00),
+(7, 6, 3, 1, 350000.00),
+(8, 7, 7, 2, 450000.00),
+(9, 8, 12, 3, 600000.00),
+(10, 9, 17, 2, 850000.00),
+(11, 10, 22, 3, 1250000.00),
+(12, 11, 4, 2, 350000.00),
+(13, 11, 8, 2, 450000.00),
+(14, 12, 13, 1, 600000.00),
+(15, 13, 18, 3, 850000.00),
+(16, 14, 23, 2, 1250000.00),
+(17, 15, 5, 4, 350000.00),
+(18, 16, 9, 2, 450000.00),
+(19, 16, 14, 2, 600000.00),
+(20, 17, 19, 1, 850000.00),
+(21, 18, 24, 2, 1250000.00),
+(22, 19, 10, 3, 450000.00),
+(23, 20, 15, 2, 600000.00),
+(24, 21, 20, 2, 850000.00),
+(25, 22, 25, 1, 1250000.00),
+(26, 22, 1, 1, 350000.00);
 
--- INSERT DATA PEMBAYARAN
+-- 8. INSERT DATA PEMBAYARAN (Menggunakan DATETIME)
 INSERT INTO pembayaran (id_pembayaran, id_reservasi, tanggal_pembayaran, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES
-(1, 1, '2026-05-01', 700000.00, 'Transfer', 'Lunas'),
-(2, 2, '2026-05-02', 1350000.00, 'Kartu Kredit', 'Lunas'),
-(3, 3, '2026-05-03', 1200000.00, 'E-Wallet', 'Lunas'),
-(4, 4, '2026-05-04', 3400000.00, 'Transfer', 'Lunas'),
-(5, 5, '2026-05-05', 2500000.00, 'Kartu Kredit', 'Lunas'),
-(6, 6, '2026-05-06', 700000.00, 'Tunai', 'Lunas'),
-(7, 7, '2026-05-07', 900000.00, 'Transfer', 'Lunas'),
-(8, 8, '2026-05-08', 1800000.00, 'E-Wallet', 'Lunas'),
-(9, 9, '2026-05-09', 1700000.00, 'Kartu Kredit', 'Lunas'),
-(10, 10, '2026-05-10', 3750000.00, 'Transfer', 'Lunas'),
-(11, 11, '2026-05-11', 1600000.00, 'Transfer', 'Lunas'),
-(12, 12, '2026-05-12', 600000.00, 'Tunai', 'Lunas'),
-(13, 13, '2026-05-13', 2550000.00, 'Transfer', 'Pending'),
-(14, 14, '2026-05-14', 2500000.00, 'Kartu Kredit', 'Lunas'),
-(15, 15, '2026-05-15', 1400000.00, 'E-Wallet', 'Pending'),
-(16, 16, '2026-05-16', 2100000.00, 'Transfer', 'Lunas'),
-(17, 17, '2026-05-17', 850000.00, 'Tunai', 'Lunas'),
-(18, 18, '2026-05-18', 2500000.00, 'Kartu Kredit', 'Pending'),
-(19, 19, '2026-05-19', 1350000.00, 'Transfer', 'Pending'),
-(20, 20, '2026-05-20', 1200000.00, 'E-Wallet', 'Pending'),
-(21, 21, '2026-05-21', 1700000.00, 'Transfer', 'Refund'),
-(22, 22, '2026-05-22', 1600000.00, 'Kartu Kredit', 'Lunas');
+(1, 1, '2026-05-01 09:20:00', 400000.00, 'Transfer', 'Lunas'),
+(2, 1, '2026-05-01 09:25:00', 300000.00, 'Kartu Kredit', 'Lunas'), 
+(3, 2, '2026-05-02 10:45:00', 1350000.00, 'Kartu Kredit', 'Lunas'),
+(4, 3, '2026-05-03 14:30:00', 1200000.00, 'E-Wallet', 'Lunas'),
+(5, 4, '2026-05-04 11:15:00', 3400000.00, 'Transfer', 'Lunas'),
+(6, 5, '2026-05-05 16:55:00', 2500000.00, 'Kartu Kredit', 'Lunas'),
+(7, 6, '2026-05-06 08:30:00', 700000.00, 'Tunai', 'Lunas'),
+(8, 7, '2026-05-07 14:00:00', 900000.00, 'Transfer', 'Lunas'),
+(9, 8, '2026-05-08 10:30:00', 1800000.00, 'E-Wallet', 'Lunas'),
+(10, 9, '2026-05-09 15:45:00', 1700000.00, 'Kartu Kredit', 'Lunas'),
+(11, 10, '2026-05-10 11:40:00', 3750000.00, 'Transfer', 'Lunas'),
+(12, 11, '2026-05-11 09:15:00', 1600000.00, 'Transfer', 'Lunas'),
+(13, 12, '2026-05-12 15:00:00', 600000.00, 'Tunai', 'Lunas'),
+(14, 13, '2026-05-13 17:25:00', 2550000.00, 'Transfer', 'Pending'),
+(15, 14, '2026-05-14 10:15:00', 2500000.00, 'Kartu Kredit', 'Lunas'),
+(16, 15, '2026-05-15 11:50:00', 1400000.00, 'E-Wallet', 'Pending'),
+(17, 16, '2026-05-16 13:45:00', 2100000.00, 'Transfer', 'Lunas'),
+(18, 17, '2026-05-17 16:30:00', 850000.00, 'Tunai', 'Lunas'),
+(19, 18, '2026-05-18 10:00:00', 2500000.00, 'Kartu Kredit', 'Pending'),
+(20, 19, '2026-05-19 14:20:00', 1350000.00, 'Transfer', 'Pending'),
+(21, 20, '2026-05-20 11:45:00', 1200000.00, 'E-Wallet', 'Pending'),
+(22, 21, '2026-05-21 10:30:00', 1700000.00, 'Transfer', 'Refund'),
+(23, 1, '2026-05-12 11:00:00', 100000.00, 'Tunai', 'Lunas');
 
--- INSERT DATA CHECK-IN
+-- 9. INSERT DATA CHECK-IN
 INSERT INTO checkin (id_checkin, id_reservasi, waktu_checkin, id_pegawai, catatan) VALUES
 (1, 1, '2026-05-10 14:05:00', 1, 'Tamu datang tepat waktu dan kamar siap digunakan.'),
 (2, 2, '2026-05-11 14:20:00', 4, 'Check-in berjalan normal.'),
@@ -184,10 +182,10 @@ INSERT INTO checkin (id_checkin, id_reservasi, waktu_checkin, id_pegawai, catata
 (8, 8, '2026-05-19 15:25:00', 2, 'Tamu menitipkan koper di concierge.'),
 (9, 9, '2026-05-20 14:40:00', 7, 'Tamu meminta late checkout jika memungkinkan.'),
 (10, 10, '2026-05-21 13:50:00', 1, 'Tamu suite melakukan check-in lebih awal.'),
-(11, 11, '2026-06-01 14:10:00', 4, 'Status reservasi berubah menjadi check-in.'),
+(11, 11, '2026-06-01 14:10:00', 4, 'Status reservasi otomatis berubah menjadi check-in via trigger.'),
 (12, 12, '2026-06-02 15:00:00', 7, 'Tamu mengonfirmasi sarapan untuk dua orang.');
 
--- INSERT DATA CHECK-OUT
+-- 10. INSERT DATA CHECK-OUT
 INSERT INTO checkout (id_checkout, id_reservasi, waktu_checkout, id_pegawai, biaya_tambahan, catatan) VALUES
 (1, 1, '2026-05-12 11:00:00', 2, 0.00, 'Check-out selesai tanpa biaya tambahan.'),
 (2, 2, '2026-05-14 10:45:00', 4, 50000.00, 'Tambahan biaya laundry.'),
@@ -198,9 +196,9 @@ INSERT INTO checkout (id_checkout, id_reservasi, waktu_checkout, id_pegawai, bia
 (7, 7, '2026-05-20 11:05:00', 1, 75000.00, 'Tambahan minibar.'),
 (8, 8, '2026-05-22 10:50:00', 2, 0.00, 'Check-out normal.'),
 (9, 9, '2026-05-22 12:00:00', 7, 150000.00, 'Tambahan late checkout.'),
-(10, 10, '2026-05-24 11:30:00', 1, 0.00, 'Check-out suite selesai.');
+(10, 10, '2026-05-24 11:30:00', 1, 0.00, 'Check-out suite selesai, status kamar kembali tersedia.');
 
--- INSERT DATA KAMAR FASILITAS
+-- 11. INSERT DATA KAMAR FASILITAS
 INSERT INTO kamar_fasilitas (id_kamar, id_fasilitas) VALUES
 (1, 1), (1, 2), (1, 3),
 (2, 1), (2, 2), (2, 3),
@@ -228,7 +226,7 @@ INSERT INTO kamar_fasilitas (id_kamar, id_fasilitas) VALUES
 (24, 1), (24, 2), (24, 3), (24, 4), (24, 5), (24, 6), (24, 7), (24, 8), (24, 9), (24, 10),
 (25, 1), (25, 2), (25, 3), (25, 4), (25, 5), (25, 6), (25, 7), (25, 8), (25, 9), (25, 10);
 
--- INSERT DATA LOG AKTIVITAS
+-- 12. INSERT DATA LOG AKTIVITAS
 INSERT INTO log_aktivitas (id_log, id_pegawai, aktivitas, waktu_aktivitas, keterangan) VALUES
 (1, 1, 'Membuat Reservasi', '2026-05-01 09:15:00', 'Reservasi ID 1 dibuat untuk tamu Andi Pratama.'),
 (2, 3, 'Mencatat Pembayaran', '2026-05-02 10:20:00', 'Pembayaran reservasi ID 2 dicatat lunas.'),
@@ -243,27 +241,18 @@ INSERT INTO log_aktivitas (id_log, id_pegawai, aktivitas, waktu_aktivitas, keter
 (11, 3, 'Proses Refund', '2026-05-21 14:10:00', 'Refund reservasi ID 21 dicatat karena reservasi dibatalkan.'),
 (12, 7, 'Konfirmasi Reservasi', '2026-05-22 10:35:00', 'Reservasi ID 22 dikonfirmasi untuk jadwal menginap bulan Juni.');
 
--- PENGECEKAN JUMLAH DATA
-SELECT 'tamu' AS tabel, COUNT(*) AS jumlah FROM tamu
-UNION ALL
-SELECT 'pegawai', COUNT(*) FROM pegawai
-UNION ALL
-SELECT 'tipe_kamar', COUNT(*) FROM tipe_kamar
-UNION ALL
-SELECT 'kamar', COUNT(*) FROM kamar
-UNION ALL
-SELECT 'reservasi', COUNT(*) FROM reservasi
-UNION ALL
-SELECT 'detail_reservasi', COUNT(*) FROM detail_reservasi
-UNION ALL
-SELECT 'pembayaran', COUNT(*) FROM pembayaran
-UNION ALL
-SELECT 'checkin', COUNT(*) FROM checkin
-UNION ALL
-SELECT 'checkout', COUNT(*) FROM checkout
-UNION ALL
-SELECT 'fasilitas', COUNT(*) FROM fasilitas
-UNION ALL
-SELECT 'kamar_fasilitas', COUNT(*) FROM kamar_fasilitas
-UNION ALL
-SELECT 'log_aktivitas', COUNT(*) FROM log_aktivitas;
+-- =========================================================
+-- VALIDASI AKHIR: VALIDASI INTEGRITAS DATA & AUTO-CALCULATION
+-- =========================================================
+SELECT 
+    dr.id_reservasi,
+    t.nama_tamu,
+    k.nomor_kamar,
+    dr.jumlah_malam,
+    dr.harga_per_malam,
+    dr.subtotal AS 'Subtotal (Dihitung Otomatis)'
+FROM detail_reservasi dr
+JOIN reservasi r ON dr.id_reservasi = r.id_reservasi
+JOIN tamu t ON r.id_tamu = t.id_tamu
+JOIN kamar k ON dr.id_kamar = k.id_kamar
+LIMIT 5;
