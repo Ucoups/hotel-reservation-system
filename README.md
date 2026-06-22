@@ -24,6 +24,14 @@ Sistem dibangun dengan memenuhi standar normalisasi **3NF**, dilengkapi trigger 
 | 4  | [Bertha Misella Silalahi] | [K1D024068] | Trigger,Procedure, Video Demo|
 
 ---
+## Latar Belakang
+Industri perhotelan merupakan salah satu sektor jasa yang terus berkembang seiring meningkatnya mobilitas masyarakat dan kebutuhan akomodasi. Dalam operasional hotel, pengelolaan data reservasi kamar, data tamu, pembayaran, check-in, check-out, serta penggunaan fasilitas menjadi aspek yang sangat penting untuk menjamin pelayanan yang efektif dan efisien.
+
+Pengelolaan data secara manual berpotensi menimbulkan berbagai permasalahan, seperti kesalahan pencatatan reservasi, duplikasi data tamu, kesulitan dalam memantau ketersediaan kamar, hingga keterlambatan dalam penyusunan laporan operasional hotel. Oleh karena itu, diperlukan suatu sistem basis data yang mampu mengintegrasikan seluruh data operasional hotel secara terstruktur dan konsisten.
+
+Sistem Reservasi Hotel merupakan solusi yang dapat digunakan untuk mengelola informasi kamar, tamu, reservasi, pembayaran, penggunaan fasilitas, serta proses check-in dan check-out secara terpusat. Dengan penerapan basis data relasional, data dapat disimpan secara terorganisasi, meminimalkan redundansi, menjaga integritas data, serta memudahkan proses pengolahan informasi.
+
+Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem Basis Data Reservasi Hotel sebagai penerapan konsep basis data relasional yang telah dipelajari selama perkuliahan.
 
 ## Rumusan Masalah
 1.	Bagaimana merancang sistem basis data yang mampu mengelola proses reservasi hotel secara terintegrasi?
@@ -67,6 +75,15 @@ hotel-reservation-db/
 ```
 
 ---
+## Identifikasi Aktor & Peran
+Basis data ini membagi hak akses dan tanggung jawab berdasarkan tabel relasional pegawai ke dalam beberapa peran berikut:
+
+| Peran Aktor | Hak Akses Tabel Utama | Deskripsi Peran Operasional |
+|---|---|---|
+| **Tamu** | `tamu`, `reservasi` | Melakukan registrasi identitas diri, memilih tipe kamar, melakukan pembayaran deposit/lunas, dan menginap. |
+| **Resepsionis** | `reservasi`, `checkin`, `checkout`, `kamar` | Mengelola pemetaan kamar kosong, memverifikasi data check-in tamu datang, memproses kepulangan check-out, dan memperbarui status kamar fisik. |
+| **Kasir** | `pembayaran` | Mencatat transaksi pembayaran dari tamu, memilih metode pembayaran, memvalidasi sisa tagihan, dan mengeluarkan invoice. |
+| **Supervisor / Manajer** | `log_aktivitas`, seluruh `Views` | Memantau kinerja operasional hotel melalui laporan audit trail, okupansi kamar harian, laporan bulanan keuangan, dan performa produktivitas staf. |
 
 ## 🗄️ Skema Database
 
@@ -339,6 +356,25 @@ mysql -u root -p hotel_reservation_db < sql/06_trigger.sql
 | Function | 3 |
 
 ---
+## Kesimpulan
+Project ini berhasil merancang dan mengimplementasikan Sistem Basis Data Relasional Reservasi Hotel secara menyeluruh menggunakan DBMS MySQL 8.0. Beberapa pencapaian utama yang dapat disimpulkan adalah sebagai berikut:
+1.	Sistem berhasil dimodelkan dengan 12 entitas/tabel yang saling terhubung melalui foreign key constraint, mencakup seluruh siklus bisnis hotel mulai dari reservasi, check-in, check-out, hingga pembayaran.
+2.	Proses normalisasi dilakukan secara sistematis dari Unnormalized Form (UNF) hingga Third Normal Form (3NF), mengeliminasi seluruh partial dependency dan transitive dependency sehingga menjamin konsistensi dan efisiensi penyimpanan data.
+3.	Implementasi DDL mencakup 12 jenis constraint (PK, FK, UNIQUE, CHECK, NOT NULL, DEFAULT, GENERATED, INDEX, ON UPDATE CASCADE, ON DELETE RESTRICT/CASCADE/SET NULL) yang memastikan integritas data di tingkat database.
+4.	Sebanyak 7 query SELECT dengan tingkat kompleksitas bertingkat berhasil dibuat, mulai dari query sederhana dengan JOIN 2 tabel, query dengan JOIN 6 tabel sekaligus, CTE (Common Table Expression), subquery, hingga agregasi multi-fungsi dengan GROUP BY dan HAVING.
+5.	Lima view diimplementasikan untuk menyederhanakan akses data bagi berbagai peran pengguna (resepsionis, kasir, housekeeping, manajemen).
+6.	Tiga stored procedure dirancang dengan prinsip ACID (menggunakan START TRANSACTION/COMMIT), validasi guard clause, dan reusability antar prosedur.
+7.	Lima trigger berhasil mengotomasi perubahan status kamar dan audit trail tanpa intervensi manual, termasuk perlindungan anti-double booking tingkat database menggunakan BEFORE INSERT trigger.
+8.	Tiga stored function dibuat dengan memanfaatkan konsep function composition (fn_cek_status_pembayaran memanggil fn_total_pendapatan_reservasi) untuk menghindari duplikasi logika bisnis.
+
+## Saran
+Meskipun sistem telah berjalan sesuai spesifikasi, terdapat beberapa aspek yang dapat dikembangkan lebih lanjut:
+1.	Integrasi dengan lapisan aplikasi (front-end berbasis web atau mobile) agar sistem dapat digunakan secara interaktif oleh pegawai hotel tanpa perlu mengeksekusi SQL secara langsung.
+2.	Penambahan modul manajemen SDM (jadwal shift pegawai, penggajian) untuk melengkapi sistem operasional hotel secara menyeluruh.
+3.	Implementasi partisi tabel (table partitioning) pada tabel reservasi dan pembayaran untuk mengoptimalkan performa query ketika volume data sudah mencapai skala besar.
+4.	Penambahan fitur pencarian ketersediaan kamar berbasis rentang tanggal yang dapat diakses oleh tamu secara mandiri (self-service booking portal).
+5.	Penggunaan event scheduler MySQL untuk mengotomasi tugas periodik seperti pengiriman notifikasi reminder check-in kepada tamu atau pembatalan otomatis reservasi yang tidak terbayar dalam batas waktu tertentu.
+6.	Enkripsi kolom sensitif (no_identitas, email, no_telepon) menggunakan AES_ENCRYPT/AES_DECRYPT untuk kepatuhan terhadap regulasi perlindungan data pribadi.
 
 ## 📚 Referensi
 
