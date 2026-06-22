@@ -4,21 +4,6 @@ CREATE DATABASE IF NOT EXISTS hotel_reservation_db
 
 USE hotel_reservation_db;
 
--- =========================================================
--- DROP TABLE (Urutan dari yang memiliki FK terbanyak)
--- =========================================================
-DROP TABLE IF EXISTS log_aktivitas;
-DROP TABLE IF EXISTS kamar_fasilitas;
-DROP TABLE IF EXISTS checkout;
-DROP TABLE IF EXISTS checkin;
-DROP TABLE IF EXISTS pembayaran;
-DROP TABLE IF EXISTS detail_reservasi;
-DROP TABLE IF EXISTS reservasi;
-DROP TABLE IF EXISTS kamar;
-DROP TABLE IF EXISTS fasilitas;
-DROP TABLE IF EXISTS tipe_kamar;
-DROP TABLE IF EXISTS pegawai;
-DROP TABLE IF EXISTS tamu;
 
 -- =========================================================
 -- 1. TABEL MASTER TAMU
