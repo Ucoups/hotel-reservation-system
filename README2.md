@@ -1,404 +1,253 @@
-# 🏢 Sistem Reservasi Hotel - Arsitektur Basis Data Tingkat Enterprise
+# 🏢 Sistem Basis Data Reservasi Hotel - Enterprise Layout (UNSOED 2026)
 
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
-![Database Architecture](https://img.shields.io/badge/Database-Architecture-success?style=for-the-badge)
-![Security & Triggers](https://img.shields.io/badge/Security-Triggers-red?style=for-the-badge)
-![Academic & Production](https://img.shields.io/badge/Status-Production--Ready-blueviolet?style=for-the-badge)
+![UNSOED](https://img.shields.io/badge/UNSOED-FMIPA--Statistika-yellow?style=for-the-badge)
+![Group-Project](https://img.shields.io/badge/Kelompok-G--1-green?style=for-the-badge)
+![Status-Academic](https://img.shields.io/badge/Academic-Documentation-blueviolet?style=for-the-badge)
 
 ---
 
-## 📌 1. Pendahuluan & Deskripsi Sistem
+## 📌 1. Identitas Proyek & Tim Pengembang
 
-Dalam industri perhotelan modern berskala *enterprise*, sistem pengelolaan reservasi yang andal, aman, dan konsisten secara waktu nyata (*real-time*) merupakan fondasi utama dari efisiensi operasional. Kompleksitas manajemen hotel tidak hanya terletak pada penyimpanan data tamu, tetapi juga pada penyelesaian tantangan kritis seperti **sinkronisasi status kamar**, **pemeliharaan integritas finansial**, dan **pencatatan audit log** yang menyeluruh untuk mencegah penyelewengan.
+Dokumentasi ini disusun sebagai bagian dari luaran akademik praktikum dan proyek mata kuliah Sistem Basis Data. Sistem Basis Data Reservasi Hotel (Enterprise Version) ini merupakan hasil perancangan dan implementasi terstruktur untuk memenuhi kebutuhan operasional industri perhotelan modern.
 
-Sistem Reservasi Hotel (Enterprise Version) ini dirancang khusus untuk mengatasi tantangan tersebut dengan memindahkan logika bisnis kritis langsung ke dalam tingkat basis data (*self-contained business logic*). Pendekatan arsitektur ini memastikan bahwa:
-1. **Pencegahan Overbooking / Double Booking** diselesaikan secara mutlak di tingkat database menggunakan *trigger* validasi transaksional, sehingga tidak ada ketergantungan pada pengecekan tingkat aplikasi (backend) yang rentan terhadap *race conditions*.
-2. **Sinkronisasi Status Kamar** (dari *Tersedia*, *Dipesan*, *Terisi*, hingga *Tersedia kembali* atau dalam masa *Perawatan*) berjalan secara otomatis dan atomik melalui *trigger* pasca-transaksi (*after insert*).
-3. **Integritas Finansial** dijamin dengan penggunaan *virtual generated columns* untuk kalkulasi otomatis, kontrol transaksi ACID (*Atomicity, Consistency, Isolation, Durability*) melalui *stored procedures*, dan proteksi kelebihan bayar (*overpayment*).
-4. **Audit Trail Komprehensif** merekam setiap mutasi pembayaran dan aktivitas operasional secara non-destruktif ke dalam log aktivitas sistem secara otomatis.
+* **Judul Laporan:** Laporan Project Basis Data - Sistem Basis Data Reservasi Hotel
+* **Institusi:** Program Studi Statistika, Jurusan Matematika, Fakultas Matematika dan Ilmu Pengetahuan Alam, Universitas Jenderal Soedirman (UNSOED), Purwokerto.
+* **Tahun Akademik:** 2026
+* **Tim Pengembang (Kelompok G-1):**
+  
+  | No | Nama Pengembang | Nomor Induk Mahasiswa (NIM) | Peran Utama | Tanggung Jawab Utama |
+  |---|---|---|---|---|
+  | 1 | **Nasywa Putri Maitsa** | K1D024043 | Database Designer | Perancangan konsep data, normalisasi, dan pembuatan kamus data. |
+  | 2 | **Nayla Edenine Qohar** | K1D024044 | Business Analyst & QA | Penyusunan aturan bisnis (*business rules*) dan pengujian skenario error. |
+  | 3 | **Abdurrahman Yusuf** | K1D024058 | SQL Lead Developer | Penyusunan DDL, DML, Stored Procedures, Triggers, Views, dan Functions. |
+  | 4 | **Bertha Misella Silalahi** | K1D024068 | Technical Writer | Penyusunan laporan teknis, dokumentasi skema relasional, dan proposal. |
 
-Dengan arsitektur yang mandiri (*self-contained*), database ini tidak hanya berfungsi sebagai media penyimpanan pasif (*passive storage*), melainkan sebagai mesin penegak aturan bisnis (*business rule enforcement engine*) yang kokoh, cepat, dan aman dari manipulasi eksternal.
-
----
-
-## ⚙️ 2. Analisis & Spesifikasi Sistem
-
-### 2.1 Ruang Lingkup Sistem (Scope)
-Sistem reservasi ini melingkupi siklus operasional hotel ujung-ke-ujung (*end-to-end*) yang terbagi menjadi beberapa modul inti basis data:
-* **Manajemen Profil & Tamu:** Mengelola data identitas tamu secara unik, aman, dan mendukung penghapusan logis (*soft delete*) untuk menjaga riwayat transaksi.
-* **Manajemen Pegawai & Akuntabilitas:** Mencatat data pegawai beserta jabatannya untuk menetapkan tanggung jawab hukum atas setiap transaksi check-in, check-out, dan pencatatan pembayaran.
-* **Master Kamar & Fasilitas:** Mengelola data fisik kamar, pengelompokan tipe kamar (kapasitas dan harga dasar per malam), serta relasi banyak-ke-banyak (*many-to-many*) antara kamar dengan fasilitas yang tersedia.
-* **Transaksi Reservasi (Header & Detail):** Memproses pemesanan kamar yang fleksibel di mana satu reservasi dapat mencakup beberapa kamar sekaligus (*multi-room reservation*) untuk durasi menginap tertentu.
-* **Enkapsulasi Pembayaran:** Mengelola pembayaran tagihan reservasi secara bertahap (*split payment*) dengan validasi ketat terhadap batas maksimum tagihan guna menghindari kesalahan input kasir.
-* **Operasional Check-In & Check-Out:** Dokumentasi waktu riil kedatangan tamu, pencatatan kondisi/catatan fisik kamar saat check-in, serta pencatatan waktu keluar beserta pembebanan biaya tambahan (*extra charge*) jika ada kerusakan atau keterlambatan.
-* **Audit Trail (Aktivitas Log):** Perekaman otomatis aktivitas operasional pegawai untuk keperluan kepatuhan (*compliance*) dan forensik data.
-
-### 2.2 Aturan Bisnis (Business Rules)
-Untuk menjamin konsistensi data, arsitektur basis data menerapkan aturan bisnis yang divalidasi langsung oleh DBMS:
-1. **Hubungan Tamu & Reservasi:** Satu tamu dapat memiliki banyak riwayat reservasi (`1:M`), namun satu reservasi hanya terikat pada satu tamu terdaftar.
-2. **Validasi Rentang Waktu:** Tanggal rencana check-out harus secara logis lebih besar dari tanggal rencana check-in (`tanggal_checkout_rencana > tanggal_checkin_rencana`). Jika dilanggar, DBMS akan menolak penyimpanan data.
-3. **Restriksi Kamar Perawatan:** Kamar yang memiliki status operasional `Perawatan` tidak diizinkan masuk ke dalam transaksi pemesanan baru.
-4. **Kalkulasi Subtotal Otomatis:** Nilai subtotal di dalam detail reservasi dihitung secara otomatis oleh sistem melalui formula `jumlah_malam * harga_per_malam` tanpa intervensi manual dari backend developer.
-5. **Anti Double-Booking:** Kamar yang sama tidak boleh dimasukkan ke dalam detail reservasi aktif yang memiliki irisan tanggal hunian bertabrakan dengan reservasi lain yang sudah terkonfirmasi.
-6. **Proteksi Overpayment:** Nominal pembayaran yang diinput oleh kasir tidak boleh melebihi sisa tagihan aktif dari reservasi terkait.
-7. **Pembersihan Status Kamar:** Saat proses check-out selesai, status kamar harus otomatis kembali menjadi `Tersedia` (kecuali jika diset menjadi `Perawatan` untuk pembersihan mendalam).
-8. **Soft Delete Data Master:** Data tamu dan pegawai tidak boleh dihapus secara fisik (`DELETE`) agar tidak merusak integritas referensial data transaksi masa lalu. Penghapusan dilakukan secara logis melalui penanda status `is_active = 0`.
+* **Dosen Pengampu:** Lutfiah Maharani Siniwi, S.Stat., M.Stat.
 
 ---
 
-## 🔄 3. Deskripsi Alur Kerja (Workflow Diagram & Process)
+## 📝 2. Pendahuluan & Deskripsi Studi Kasus
 
-### 3.1 Alur Reservasi & Pembayaran
+### Latar Belakang
+Industri perhotelan modern dituntut untuk memiliki tingkat efisiensi operasional yang sangat tinggi dan ketepatan data yang mutlak. Pengelolaan hotel konvensional yang masih mengandalkan pencatatan manual atau sistem terdesentralisasi non-relasional sering kali menghadapi kendala serius. Beberapa masalah klasik yang sering muncul di antaranya:
+* **Duplikasi Data:** Pengulangan penulisan identitas tamu yang sama pada setiap pemesanan baru, yang memboroskan ruang penyimpanan.
+* **Inkonsistensi Status Kamar:** Terjadinya *double booking* di mana satu kamar fisik dipesan oleh dua pihak yang berbeda pada tanggal yang beririsan (*race condition*).
+* **Keterlambatan Pelaporan Keuangan:** Kesulitan menghitung sisa tagihan secara *real-time* akibat pembayaran bertahap (*split payment*), biaya tambahan check-out (*late charge/damage charge*), dan kalkulasi subtotal yang masih manual.
+* **Ketiadaan Audit Trail:** Tidak adanya rekaman log aktivitas yang akurat mengenai pegawai mana yang memproses check-in, check-out, atau menerima pembayaran uang masuk.
 
-```text
-[ TAMU ] ──> Pilih Kamar & Tanggal ──> Cek Bentrok Tanggal (Trigger Validasi)
-                                                │
-                                       ┌────────┴────────┐
-                                    [BENTROK]        [TERSEDIA]
-                                       │                 │
-                                 Ditolak (Error)    Status Kamar: 'Dipesan'
-                                                    Reservasi: 'Menunggu'
-                                                         │
-                                                         ▼
-                                                Kasir Input Pembayaran
-                                                         │
-                                            ┌────────────┴────────────┐
-                                    [OVERPAYMENT]               [VALID]
-                                         │                            │
-                                   Ditolak (Error)            Pembayaran Disimpan
-                                                              Log Audit Keuangan
-                                                                      │
-                                                           ┌──────────┴──────────┐
-                                                    [SISA TAGIHAN > 0]    [SISA TAGIHAN <= 0]
-                                                           │                     │
-                                                   Tetap 'Menunggu'       Set 'Dikonfirmasi'
-```
+Untuk memecahkan masalah tersebut, Kelompok G-1 merancang dan mengimplementasikan sistem basis data relasional terintegrasi menggunakan MySQL 8.0. Arsitektur data ini memindahkan seluruh validasi aturan bisnis secara mandiri ke tingkat database (*self-contained business logic*), sehingga menjamin konsistensi data secara absolut terlepas dari teknologi backend aplikasi yang digunakan.
 
-* **Proses Transaksi:**
-  1. Tamu melakukan pemesanan untuk kamar tertentu pada rentang tanggal rencana check-in dan check-out.
-  2. Sebelum data disimpan ke tabel `detail_reservasi`, *trigger* `trg_before_detail_reservasi_insert` melakukan pengecekan ganda: memastikan status kamar tidak sedang `Perawatan` dan tidak ada reservasi terkonfirmasi lain yang memesan kamar tersebut pada tanggal yang saling tumpang tindih (*overlap*).
-  3. Jika aman, reservasi tercatat dengan status awal `Menunggu` dan status kamar fisik berubah menjadi `Dipesan` (*after insert trigger*).
-  4. Ketika tamu melakukan pembayaran deposit atau pelunasan, kasir menginput data ke tabel `pembayaran`.
-  5. *Trigger* sebelum penyisipan data pembayaran (`trg_before_insert_pembayaran`) menghitung sisa tagihan saat ini. Jika jumlah bayar baru melebihi sisa tagihan, transaksi dihentikan secara paksa (*raise error*).
-  6. Jika pembayaran valid, status reservasi diperbarui menjadi `Dikonfirmasi` (apabila tagihan telah lunas) dan rincian transaksi kasir langsung disalin ke tabel audit `log_aktivitas`.
+### Tujuan & Manfaat
+#### 1. Bagi Pihak Manajemen Hotel
+* Menjamin keamanan operasional kamar melalui pencegahan *double booking* otomatis di tingkat database.
+* Memantau ketersediaan kamar, laporan pembayaran, dan kinerja staf secara langsung (*real-time*).
+* Meminimalkan risiko kerugian keuangan dengan adanya sistem proteksi kelebihan bayar (*overpayment protection*).
 
-### 3.2 Alur Operasional Check-In & Check-Out
+#### 2. Bagi Tamu Hotel
+* Memberikan kepastian pemesanan tanpa risiko tumpang tindih kamar.
+* Proses transaksi check-in dan check-out yang lebih cepat dan transparan dengan tagihan yang terperinci.
 
-```text
-[ RESERVASI DIKONFIRMASI ]
-           │
-           ▼
-Panggil Stored Procedure: sp_proses_checkin_aman (Atomic Transaction)
-           │
-           ├──> INSERT INTO checkin
-           ├──> UPDATE kamar SET status_kamar = 'Terisi' (Trigger)
-           ├──> UPDATE reservasi SET status_reservasi = 'Check-in' (Trigger)
-           ├──> INSERT INTO log_aktivitas (Audit Trail)
-           │
-     [ COMMIT / ROLLBACK JIKA ERROR ]
-           │
-           ▼
-[ TAMU MENGINAP (Status Kamar: Terisi) ]
-           │
-           ▼
-Tamu Check-Out ──> Catat Biaya Tambahan (Jika Ada)
-           │
-           ▼
-INSERT INTO checkout ──> Trigger AFTER INSERT:
-                             ├──> UPDATE kamar SET status_kamar = 'Tersedia'
-                             ├──> UPDATE reservasi SET status_reservasi = 'Selesai'
-                             └──> Catat Audit Log Penutupan Transaksi
-```
-
-* **Proses Transaksi:**
-  1. Pada hari kedatangan, resepsionis mengeksekusi *Stored Procedure* `sp_proses_checkin_aman`. Prosedur ini bekerja di dalam satu cakupan transaksi ACID guna memastikan pencatatan data ke tabel `checkin` terlaksana secara aman.
-  2. *Trigger* `trg_after_checkin_insert` merespons penyisipan data check-in dengan mengubah status kamar fisik secara instan menjadi `Terisi` dan status reservasi menjadi `Check-in`.
-  3. Saat tamu selesai menginap, pegawai memproses kepulangan dengan memasukkan data ke tabel `checkout` (mencatat waktu keluar riil serta biaya tambahan seperti *late check-out* atau denda kerusakan barang jika ada).
-  4. Penyisipan data checkout memicu *trigger* `trg_after_checkout_insert` yang bertugas melepaskan kembali status kamar menjadi `Tersedia` agar dapat dipesan kembali oleh tamu lain, serta mengubah status reservasi akhir menjadi `Selesai` secara otomatis.
+#### 3. Bagi Tim Pengembang (Mahasiswa)
+* Menerapkan konsep normalisasi database secara riil hingga bentuk normal ketiga (3NF).
+* Memahami cara kerja transaksi atomik (ACID) dan pemrograman basis data lanjutan (*Stored Procedures, Triggers, Functions, Views*).
 
 ---
 
-## 🗺️ 4. Arsitektur Data & Relasi (ERD Schema)
+## ⚙️ 3. Analisis Kebutuhan & Aturan Bisnis (Business Rules)
 
-Berikut adalah visualisasi hubungan relasional database menggunakan notasi *Crow's Foot* yang menggambarkan aliran kunci utama (*Primary Key* - PK) ke kunci tamu (*Foreign Key* - FK):
+### 3.1 Ruang Lingkup Sistem (Scope)
+Sistem basis data reservasi hotel ini mengkapsulasi seluruh proses bisnis inti perhotelan:
+1. **Pendaftaran Tamu & Pegawai:** Registrasi biodata unik, nomor telepon, email, serta kontrol status aktif pegawai dan tamu.
+2. **Pengelolaan Kamar & Fasilitas:** Kamar fisik dipetakan berdasarkan tipe (Standard, Deluxe, Suite, dll.) dengan harga dasar per malam yang berbeda, serta relasi dinamis terhadap daftar fasilitas kamar yang tersedia.
+3. **Pemesanan Kamar (Reservasi):** Tamu dapat memesan satu atau beberapa kamar sekaligus dalam satu reservasi untuk rentang tanggal rencana tertentu.
+4. **Pembayaran Enkapsulasi:** Transaksi pembayaran didokumentasikan secara terperinci dengan pencatatan metode pembayaran, tanggal transaksi, dan validasi nominal terhadap sisa tagihan.
+5. **Realisasi Check-In & Check-Out:** Pencatatan waktu aktual saat tamu memasuki kamar dan saat tamu meninggalkan hotel beserta pembebanan biaya tambahan operasional.
+6. **Audit Trail Otomatis:** Setiap mutasi keuangan penting akan direkam langsung oleh sistem ke dalam tabel log aktivitas pegawai.
 
-```mermaid
-erDiagram
-    TAMU {
-        INT id_tamu PK
-        VARCHAR nama_tamu
-        VARCHAR no_identitas UNIQUE
-        ENUM jenis_kelamin
-        VARCHAR no_telepon
-        VARCHAR email UNIQUE
-        TEXT alamat
-        TINYINT is_active
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
+### 3.2 Identifikasi Aktor & Peran
+Basis data ini membagi hak akses dan tanggung jawab berdasarkan tabel relasional pegawai ke dalam beberapa peran berikut:
 
-    PEGAWAI {
-        INT id_pegawai PK
-        VARCHAR nama_pegawai
-        VARCHAR jabatan
-        VARCHAR no_telepon
-        VARCHAR email UNIQUE
-        TINYINT is_active
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
+| Peran Aktor | Hak Akses Tabel Utama | Deskripsi Peran Operasional |
+|---|---|---|
+| **Tamu** | `tamu`, `reservasi` | Melakukan registrasi identitas diri, memilih tipe kamar, melakukan pembayaran deposit/lunas, dan menginap. |
+| **Resepsionis** | `reservasi`, `checkin`, `checkout`, `kamar` | Mengelola pemetaan kamar kosong, memverifikasi data check-in tamu datang, memproses kepulangan check-out, dan memperbarui status kamar fisik. |
+| **Kasir** | `pembayaran` | Mencatat transaksi pembayaran dari tamu, memilih metode pembayaran, memvalidasi sisa tagihan, dan mengeluarkan invoice. |
+| **Supervisor / Manajer** | `log_aktivitas`, seluruh `Views` | Memantau kinerja operasional hotel melalui laporan audit trail, okupansi kamar harian, laporan bulanan keuangan, dan performa produktivitas staf. |
 
-    TIPE_KAMAR {
-        INT id_tipe_kamar PK
-        VARCHAR nama_tipe UNIQUE
-        INT kapasitas
-        DECIMAL harga_per_malam
-        TEXT deskripsi
-    }
-
-    FASILITAS {
-        INT id_fasilitas PK
-        VARCHAR nama_fasilitas UNIQUE
-        TEXT deskripsi
-    }
-
-    KAMAR {
-        INT id_kamar PK
-        INT id_tipe_kamar FK
-        VARCHAR nomor_kamar UNIQUE
-        VARCHAR lantai
-        ENUM status_kamar
-    }
-
-    KAMAR_FASILITAS {
-        INT id_kamar PK_FK
-        INT id_fasilitas PK_FK
-    }
-
-    RESERVASI {
-        INT id_reservasi PK
-        INT id_tamu FK
-        INT id_pegawai FK
-        DATETIME tanggal_reservasi
-        DATE tanggal_checkin_rencana
-        DATE tanggal_checkout_rencana
-        ENUM status_reservasi
-    }
-
-    DETAIL_RESERVASI {
-        INT id_detail_reservasi PK
-        INT id_reservasi FK
-        INT id_kamar FK
-        INT jumlah_malam
-        DECIMAL harga_per_malam
-        DECIMAL subtotal "GENERATED STORED"
-    }
-
-    PEMBAYARAN {
-        INT id_pembayaran PK
-        INT id_reservasi FK
-        DATETIME tanggal_pembayaran
-        DECIMAL jumlah_bayar
-        ENUM metode_pembayaran
-        ENUM status_pembayaran
-    }
-
-    CHECKIN {
-        INT id_checkin PK
-        INT id_reservasi FK_UNIQUE
-        DATETIME waktu_checkin
-        INT id_pegawai FK
-        TEXT catatan
-    }
-
-    CHECKOUT {
-        INT id_checkout PK
-        INT id_reservasi FK_UNIQUE
-        DATETIME waktu_checkout
-        INT id_pegawai FK
-        DECIMAL biaya_tambahan
-        TEXT catatan
-    }
-
-    LOG_AKTIVITAS {
-        INT id_log PK
-        INT id_pegawai FK
-        VARCHAR aktivitas
-        DATETIME waktu_aktivitas
-        TEXT keterangan
-    }
-
-    TAMU ||--o{ RESERVASI : "melakukan"
-    PEGAWAI ||--o{ RESERVASI : "membuat"
-    PEGAWAI ||--o{ CHECKIN : "memproses"
-    PEGAWAI ||--o{ CHECKOUT : "memproses"
-    PEGAWAI ||--o{ LOG_AKTIVITAS : "melakukan"
-    TIPE_KAMAR ||--o{ KAMAR : "mengelompokkan"
-    KAMAR ||--o{ KAMAR_FASILITAS : "memiliki"
-    FASILITAS ||--o{ KAMAR_FASILITAS : "tersedia di"
-    RESERVASI ||--o{ DETAIL_RESERVASI : "memiliki"
-    KAMAR ||--o{ DETAIL_RESERVASI : "dipesan"
-    RESERVASI ||--o{ PEMBAYARAN : "dibiayai"
-    RESERVASI ||--o| CHECKIN : "terealisasi"
-    RESERVASI ||--o| CHECKOUT : "ditutup"
-```
-
-### Penjelasan Kunci Hubungan & Integritas Referensial:
-1. **`kamar` ke `tipe_kamar`:** Hubungan `1:M` menggunakan opsi `ON UPDATE CASCADE ON DELETE RESTRICT` untuk mencegah terhapusnya tipe kamar yang masih digunakan oleh kamar fisik aktif.
-2. **`reservasi` ke `tamu` & `pegawai`:** Menerapkan `ON DELETE RESTRICT` guna memastikan data transaksi historis tidak hilang secara tidak sengaja akibat penghapusan data tamu atau pegawai secara langsung.
-3. **`detail_reservasi` ke `reservasi`:** Menggunakan opsi `ON DELETE CASCADE` sehingga jika dokumen induk reservasi dihapus, seluruh detail pemesanan kamar terkait akan terhapus otomatis demi menjaga konsistensi.
-4. **`kamar_fasilitas`:** Tabel persimpangan (*junction table*) dengan kunci primer komposit (`id_kamar`, `id_fasilitas`) untuk menormalisasi hubungan banyak-ke-banyak (*many-to-many*) antara kamar fisik dengan inventaris fasilitas hotel.
+### 3.3 Aturan Bisnis Inti (Core Business Rules)
+Aturan bisnis berikut dikunci secara mutlak pada tingkat database menggunakan constraint, trigger, dan stored procedure:
+* **Unik & Kritis:** Kolom `no_identitas` dan `email` tamu wajib bernilai unik (`UNIQUE`) untuk menghindari duplikasi identitas pelanggan.
+* **Konsistensi Tanggal Rencana:** Tanggal check-out rencana wajib lebih besar dari tanggal check-in rencana (`tanggal_checkout_rencana > tanggal_checkin_rencana`). Pengecekan ini diikat oleh `CHECK CONSTRAINT`.
+* **Proteksi Double Booking:** Satu kamar fisik hanya boleh dipesan oleh satu reservasi aktif pada rentang tanggal tertentu. Jika terdapat irisan tanggal hunian (`check-in` baru < `check-out` lama AND `check-out` baru > `check-in` lama), DBMS akan membatalkan penyisipan data secara paksa.
+* **Otomasi Subtotal Finansial:** Kolom `subtotal` pada tabel `detail_reservasi` tidak boleh diinput manual, melainkan dihitung secara otomatis sebagai `jumlah_malam * harga_per_malam`.
+* **Korelasi Operasional (1:1):** Catatan check-in dan check-out terikat secara unik (`UNIQUE`) terhadap satu reservasi. Reservasi yang sudah check-in tidak dapat melakukan check-in ulang, demikian pula untuk check-out.
+* **Soft Delete Data Master:** Penanda status `is_active` (`TINYINT(1) DEFAULT 1`) disematkan pada tabel `tamu` dan `pegawai`. Proses penonaktifan data master dilakukan dengan mengubah nilai `is_active` menjadi `0`, bukan melakukan penghapusan fisik (`DELETE`), guna menjaga keutuhan relasi data transaksi masa lampau.
 
 ---
 
-## 💎 5. Fitur Unggulan Arsitektur Data (Advanced Database Features)
+## 🗺️ 4. Perancangan Basis Data & Normalisasi (3NF)
 
-### 5.1 Soft Delete (Penghapusan Logis Data Master)
-Metode penghapusan logis diterapkan pada tabel master `tamu` dan `pegawai` melalui kolom flag `is_active` (`TINYINT(1)`). Data transaksi historis tetap valid untuk kebutuhan pelaporan keuangan jangka panjang.
-* **Keuntungan:** Mencegah *broken references* (kegagalan kunci asing) tanpa kehilangan akurasi audit log operasional masa lalu.
-* **Implementasi Query Seleksi Data Aktif:**
+### 4.1 Alur Normalisasi (UNF ke 3NF)
+Proses normalisasi dilakukan secara bertahap dari dokumen tidak ternormalisasi (*Unnormalized Form*) hingga mencapai bentuk normal ketiga (*Third Normal Form*):
+
+1. **Unnormalized Form (UNF):**
+   Data transaksi reservasi awal dikumpulkan dalam satu berkas besar yang berisi grup berulang (*repeating groups*) seperti data tamu, tipe kamar, detail kamar yang dipesan, dan pembayaran yang digabungkan dalam satu baris record.
+2. **First Normal Form (1NF):**
+   Repeating groups dihilangkan dengan membuat setiap baris record memiliki nilai atomik (tunggal). Semua kolom diisi penuh tanpa ada sel yang kosong atau berisi array data. Namun, terdapat banyak redundansi data tamu dan kamar.
+3. **Second Normal Form (2NF):**
+   Menghilangkan ketergantungan parsial (*partial dependency*). Atribut-atribut non-key yang hanya bergantung pada sebagian kunci primer dipisahkan. Data master seperti data tamu, kamar, tipe kamar, pegawai, dan fasilitas dipisahkan ke tabel tersendiri, terpisah dari tabel transaksi reservasi.
+4. **Third Normal Form (3NF):**
+   Menghilangkan ketergantungan transitif (*transitive dependency*). Hubungan di mana atribut non-key bergantung pada atribut non-key lainnya dipecah. Data pembayaran, check-in, check-out, serta data jembatan kamar-fasilitas dipisahkan ke tabel mandiri. Hasil akhirnya adalah **12 tabel yang bersih dan saling berelasi tanpa ada anomali update, insert, atau delete**.
+
+### 4.2 Skema Relasional (Logical Design)
+Berdasarkan hasil transformasi 3NF, skema relasional logis dari ke-12 tabel didefinisikan sebagai berikut:
+
+* **`tamu`** (`id_tamu` **PK**, `nama_tamu`, `no_identitas` **UK**, `jenis_kelamin`, `no_telepon`, `email` **UK**, `alamat`, `is_active`, `created_at`, `updated_at`)
+* **`pegawai`** (`id_pegawai` **PK**, `nama_pegawai`, `jabatan`, `no_telepon`, `email` **UK**, `is_active`, `created_at`, `updated_at`)
+* **`tipe_kamar`** (`id_tipe_kamar` **PK**, `nama_tipe` **UK**, `kapasitas`, `harga_per_malam`, `deskripsi`)
+* **`fasilitas`** (`id_fasilitas` **PK**, `nama_fasilitas` **UK**, `deskripsi`)
+* **`kamar`** (`id_kamar` **PK**, `id_tipe_kamar` **FK**, `nomor_kamar` **UK**, `lantai`, `status_kamar`)
+* **`reservasi`** (`id_reservasi` **PK**, `id_tamu` **FK**, `id_pegawai` **FK**, `tanggal_reservasi`, `tanggal_checkin_rencana`, `tanggal_checkout_rencana`, `status_reservasi`)
+* **`detail_reservasi`** (`id_detail_reservasi` **PK**, `id_reservasi` **FK**, `id_kamar` **FK**, `jumlah_malam`, `harga_per_malam`, `subtotal` **GENERATED STORED**, **UK**(`id_reservasi`, `id_kamar`))
+* **`pembayaran`** (`id_pembayaran` **PK**, `id_reservasi` **FK**, `tanggal_pembayaran`, `jumlah_bayar`, `metode_pembayaran`, `status_pembayaran`)
+* **`checkin`** (`id_checkin` **PK**, `id_reservasi` **FK/UK**, `waktu_checkin`, `id_pegawai` **FK**, `catatan`)
+* **`checkout`** (`id_checkout` **PK**, `id_reservasi` **FK/UK**, `waktu_checkout`, `id_pegawai` **FK**, `biaya_tambahan`, `catatan`)
+* **`kamar_fasilitas`** (`id_kamar` **PK/FK**, `id_fasilitas` **PK/FK**)
+* **`log_aktivitas`** (`id_log` **PK**, `id_pegawai` **FK**, `aktivitas`, `waktu_aktivitas`, `keterangan`)
+
+### 4.3 Struktur Kardinalitas
+Kardinalitas relasi database dikelola dengan aturan berikut:
+* **`tamu` ke `reservasi` (`1:M`):** Tamu dapat memesan reservasi berulang kali.
+* **`tipe_kamar` ke `kamar` (`1:M`):** Tipe kamar Deluxe digunakan oleh banyak nomor kamar fisik.
+* **`reservasi` ke `detail_reservasi` (`1:M`):** Satu reservasi dapat memuat banyak kamar sekaligus.
+* **`reservasi` ke `checkin` & `checkout` (`1:1`):** Realisasi waktu check-in dan check-out dicatat tepat satu kali per transaksi reservasi untuk menjamin validitas operasional.
+* **`kamar` ke `fasilitas` (`M:N`):** Kamar fisik berelasi dengan banyak fasilitas hotel. Hubungan ini didekonstruksi menggunakan tabel junction **`kamar_fasilitas`** yang berisi pasangan kunci primer komposit `(id_kamar, id_fasilitas)`.
+
+---
+
+## 💎 5. Arsitektur Lanjutan & Integritas Data (Advanced DDL Features)
+
+### 5.1 Audit Trail & Soft Delete
+Data historis transaksi finansial hotel sangat bergantung pada keberadaan data tamu dan pegawai. 
+* **Alasan Arsitektur:** Jika data pegawai dihapus secara fisik (`DELETE`), database akan mengalami kegagalan integritas kunci asing (*foreign key constraint violation*) pada tabel transaksi.
+* **Solusi Soft Delete:** Kolom `is_active` digunakan untuk menyembunyikan data master dari sistem aktif tanpa menghapusnya dari disk.
+* **Solusi Audit Trail:** Pada tabel `log_aktivitas`, foreign key `id_pegawai` dikonfigurasi dengan opsi `ON DELETE SET NULL` dan `ON UPDATE CASCADE`.
+  ```sql
+  CONSTRAINT FK_LOG_PEGAWAI FOREIGN KEY (ID_PEGAWAI) REFERENCES PEGAWAI(ID_PEGAWAI)
+      ON UPDATE CASCADE ON DELETE SET NULL
+  ```
+  Artinya, jika data pegawai terpaksa dihapus secara fisik, catatan aktivitas audit penting pegawai tersebut pada masa lalu tetap tersimpan di tabel log dengan nilai `id_pegawai = NULL` (tidak merusak data laporan).
+
+### 5.2 Integritas Finansial (Generated Column)
+Pada detail reservasi, nilai kolom `subtotal` dideklarasikan sebagai virtual generated column yang langsung disimpan di media penyimpanan disk (`STORED`).
 ```sql
+SUBTOTAL DECIMAL(12,2) GENERATED ALWAYS AS (JUMLAH_MALAM * HARGA_PER_MALAM) STORED
+```
+* **Fungsi:** Mengunci formula kalkulasi di tingkat database. Backend developer atau aplikasi kasir tidak dapat memanipulasi atau mengirimkan nilai subtotal yang salah. Nilai subtotal dijamin selalu konsisten 100% secara matematis.
+
+### 5.3 Check Constraints
+Untuk mencegah kesalahan fatal penginputan data numerik negatif oleh pengguna, database menerapkan `CHECK CONSTRAINT` pada kolom sensitif:
+* `CHECK (kapasitas > 0)` pada tabel `tipe_kamar`.
+* `CHECK (harga_per_malam >= 0)` pada tabel `tipe_kamar` dan `detail_reservasi`.
+* `CHECK (jumlah_malam > 0)` pada tabel `detail_reservasi`.
+* `CHECK (jumlah_bayar > 0)` pada tabel `pembayaran`.
+* `CHECK (biaya_tambahan >= 0)` pada tabel `checkout`.
+* `CHECK (tanggal_checkout_rencana > tanggal_checkin_rencana)` pada tabel `reservasi`.
+
+### 5.4 Database Indexing
+Untuk mengoptimalkan performa query pencarian data di hotel berskala besar, indeks khusus didirikan pada kolom yang paling sering digunakan dalam klausa `WHERE`, `JOIN`, dan `ORDER BY`:
+```sql
+-- Mempercepat pencarian kamar berdasarkan tipe dan status (untuk Front Office)
+INDEX IDX_KAMAR_TIPE (ID_TIPE_KAMAR);
+INDEX IDX_KAMAR_STATUS (STATUS_KAMAR);
+
+-- Mempercepat pelacakan transaksi reservasi berdasarkan tamu, pegawai, dan statusnya
+INDEX IDX_RESERVASI_TAMU (ID_TAMU);
+INDEX IDX_RESERVASI_PEGAWAI (ID_PEGAWAI);
+INDEX IDX_RESERVASI_STATUS (STATUS_RESERVASI);
+
+-- Mempercepat pencarian data pembayaran & audit log berdasarkan rentang waktu
+INDEX IDX_PEMBAYARAN_RESERVASI (ID_RESERVASI);
+INDEX IDX_PEMBAYARAN_STATUS (STATUS_PEMBAYARAN);
+INDEX IDX_LOG_WAKTU (WAKTU_AKTIVITAS);
+```
+
+---
+
+## 🚀 6. Implementasi Objek Programmable & Pengujian (DML & Objects)
+
+### 6.1 Database Views (5 View)
+
+Berikut adalah definisi lengkap SQL untuk kelima objek *view* yang digunakan untuk pelaporan dan pemantauan sistem:
+
+#### 1. `vw_detail_reservasi_tamu`
+Menampilkan rincian reservasi tamu secara terperinci untuk kebutuhan Front Office.
+```sql
+CREATE OR REPLACE VIEW VW_DETAIL_RESERVASI_TAMU AS
+SELECT
+    R.ID_RESERVASI,
+    T.NAMA_TAMU,
+    T.NO_TELEPON,
+    K.NOMOR_KAMAR,
+    TK.NAMA_TIPE,
+    DATE_FORMAT(R.TANGGAL_RESERVASI, '%d-%m-%Y %H:%i') AS TANGGAL_BOOKING,
+    DATE_FORMAT(R.TANGGAL_CHECKIN_RENCANA, '%d-%m-%Y') AS RENCANA_CHECKIN,
+    DATE_FORMAT(R.TANGGAL_CHECKOUT_RENCANA, '%d-%m-%Y') AS RENCANA_CHECKOUT,
+    DR.JUMLAH_MALAM,
+    DR.HARGA_PER_MALAM,
+    DR.SUBTOTAL,
+    R.STATUS_RESERVASI
+FROM RESERVASI R
+JOIN TAMU T ON R.ID_TAMU = T.ID_TAMU
+JOIN DETAIL_RESERVASI DR ON R.ID_RESERVASI = DR.ID_RESERVASI
+JOIN KAMAR K ON DR.ID_KAMAR = K.ID_KAMAR
+JOIN TIPE_KAMAR TK ON K.ID_TIPE_KAMAR = TK.ID_TIPE_KAMAR;
+```
+
+#### 2. `vw_billing_reservasi_summary`
+Menampilkan ringkasan tagihan per reservasi serta sisa piutang untuk melacak tamu yang kurang bayar (`sisa_tagihan > 0`).
+```sql
+CREATE OR REPLACE VIEW VW_BILLING_RESERVASI_SUMMARY AS
 SELECT 
-    ID_TAMU, 
-    NAMA_TAMU, 
-    EMAIL, 
-    NO_TELEPON 
-FROM TAMU 
-WHERE IS_ACTIVE = 1;
+    R.ID_RESERVASI,
+    T.ID_TAMU,
+    T.NAMA_TAMU,
+    R.STATUS_RESERVASI,
+    IFNULL(SUM(DR.SUBTOTAL), 0) AS TOTAL_BIAYA_KAMAR,
+    IFNULL(CO.BIAYA_TAMBAHAN, 0) AS BIAYA_TAMBAHAN_CHECKOUT,
+    (IFNULL(SUM(DR.SUBTOTAL), 0) + IFNULL(CO.BIAYA_TAMBAHAN, 0)) AS GRAND_TOTAL_TAGIHAN,
+    IFNULL((SELECT SUM(JUMLAH_BAYAR) FROM PEMBAYARAN WHERE ID_RESERVASI = R.ID_RESERVASI AND STATUS_PEMBAYARAN = 'Lunas'), 0) AS TOTAL_TELAH_DIBAYAR,
+    ((IFNULL(SUM(DR.SUBTOTAL), 0) + IFNULL(CO.BIAYA_TAMBAHAN, 0)) - 
+     IFNULL((SELECT SUM(JUMLAH_BAYAR) FROM PEMBAYARAN WHERE ID_RESERVASI = R.ID_RESERVASI AND STATUS_PEMBAYARAN = 'Lunas'), 0)) AS SISA_TAGIHAN
+FROM RESERVASI R
+JOIN TAMU T ON R.ID_TAMU = T.ID_TAMU
+LEFT JOIN DETAIL_RESERVASI DR ON R.ID_RESERVASI = DR.ID_RESERVASI
+LEFT JOIN CHECKOUT CO ON R.ID_RESERVASI = CO.ID_RESERVASI
+GROUP BY R.ID_RESERVASI, T.ID_TAMU, CO.BIAYA_TAMBAHAN;
 ```
 
-### 5.2 Data Integrity via Virtual Generated Columns (`subtotal`)
-Penghitungan subtotal pembayaran pada tabel `detail_reservasi` diserahkan sepenuhnya ke mesin database menggunakan *Virtual Generated Column* yang disimpan secara fisik (`STORED`).
-* **Keuntungan:** Menghilangkan redundansi data, menghindari ketidakcocokan nilai akibat kalkulasi yang salah di sisi aplikasi, dan mempercepat waktu respons query laporan.
-* **Implementasi DDL:**
+#### 3. `vw_laporan_pembayaran`
+Digunakan oleh bagian Finance untuk mengaudit arus kas pembayaran masuk.
 ```sql
-CREATE TABLE DETAIL_RESERVASI (
-    ID_DETAIL_RESERVASI INT AUTO_INCREMENT PRIMARY KEY,
-    ID_RESERVASI INT NOT NULL,
-    ID_KAMAR INT NOT NULL,
-    JUMLAH_MALAM INT NOT NULL CHECK (JUMLAH_MALAM > 0),
-    HARGA_PER_MALAM DECIMAL(12,2) NOT NULL CHECK (HARGA_PER_MALAM >= 0),
-    -- Subtotal otomatis dihitung oleh database untuk akurasi data finansial
-    SUBTOTAL DECIMAL(12,2) GENERATED ALWAYS AS (JUMLAH_MALAM * HARGA_PER_MALAM) STORED,
-    CONSTRAINT FK_DETAIL_RESERVASI FOREIGN KEY (ID_RESERVASI) REFERENCES RESERVASI(ID_RESERVASI)
-        ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=INNODB;
+CREATE OR REPLACE VIEW VW_LAPORAN_PEMBAYARAN AS
+SELECT
+    PB.ID_PEMBAYARAN,
+    R.ID_RESERVASI,
+    T.NAMA_TAMU,
+    DATE_FORMAT(PB.TANGGAL_PEMBAYARAN, '%d-%m-%Y %H:%i:%s') AS WAKTU_PEMBAYARAN,
+    PB.JUMLAH_BAYAR,
+    PB.METODE_PEMBAYARAN,
+    PB.STATUS_PEMBAYARAN
+FROM PEMBAYARAN PB
+JOIN RESERVASI R ON PB.ID_RESERVASI = R.ID_RESERVASI
+JOIN TAMU T ON R.ID_TAMU = T.ID_TAMU;
 ```
 
-### 5.3 Overpayment Protection via Trigger
-Guna menjaga akurasi arus kas keuangan, sistem dilengkapi *trigger* pra-penyisipan data pembayaran untuk memastikan jumlah uang yang dibayarkan tidak melebihi sisa tagihan reservasi.
-* **Keuntungan:** Menghindari kerugian administrasi akibat pengembalian dana manual atau kesalahan kasir saat menginput pembayaran.
-* **Implementasi SQL Trigger:**
+#### 4. `vw_status_kamar_opsional`
+Menampilkan okupansi kamar fisik secara *real-time* berserta nama tamu yang menginap (jika kamar terisi).
 ```sql
-DELIMITER //
-
-CREATE TRIGGER TRG_BEFORE_INSERT_PEMBAYARAN
-BEFORE INSERT ON PEMBAYARAN
-FOR EACH ROW
-BEGIN
-    DECLARE V_TOTAL_TAGIHAN DECIMAL(12,2);
-    DECLARE V_TOTAL_DIBAYAR  DECIMAL(12,2);
-    DECLARE V_SISA_TAGIHAN   DECIMAL(12,2);
-    
-    -- 1. Hitung total tagihan kotor menggunakan fungsi yang sudah ada (kamar + denda checkout)
-    SET V_TOTAL_TAGIHAN = FN_TOTAL_PENDAPATAN_RESERVASI(NEW.ID_RESERVASI);
-    
-    -- 2. Hitung akumulasi pembayaran sukses sebelumnya
-    SELECT COALESCE(SUM(JUMLAH_BAYAR), 0) INTO V_TOTAL_DIBAYAR
-    FROM PEMBAYARAN
-    WHERE ID_RESERVASI = NEW.ID_RESERVASI 
-      AND STATUS_PEMBAYARAN = 'Lunas';
-      
-    -- 3. Tentukan sisa tagihan riil
-    SET V_SISA_TAGIHAN = V_TOTAL_TAGIHAN - V_TOTAL_DIBAYAR;
-    
-    -- 4. Validasi kelebihan bayar
-    IF NEW.JUMLAH_BAYAR > V_SISA_TAGIHAN THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'OPERASI DITOLAK: Jumlah pembayaran yang diinput melebihi sisa tagihan reservasi (Overpayment).';
-    END IF;
-END //
-
-DELIMITER ;
-```
-
-### 5.4 Atomic Operations via Stored Procedure
-Proses check-in melibatkan pembaruan beberapa tabel sekaligus. Sistem menggunakan *Stored Procedure* transaksional `sp_proses_checkin_aman` dengan *Exit Handler* untuk memastikan keandalan eksekusi (*All-or-Nothing*).
-* **Keuntungan:** Menghindari keadaan data setengah terproses (*partial updates*) apabila koneksi terputus di tengah proses.
-* **Implementasi SQL Stored Procedure:**
-```sql
-DELIMITER //
-
-CREATE PROCEDURE SP_PROSES_CHECKIN_AMAN(
-    IN  P_ID_RESERVASI INT,
-    IN  P_ID_PEGAWAI   INT,
-    IN  P_CATATAN      TEXT,
-    OUT P_STATUS_PESAN VARCHAR(100)
-)
-BEGIN
-    DECLARE V_STATUS_RESERVASI VARCHAR(30);
-    DECLARE V_KAMAR_PERAWATAN  INT DEFAULT 0;
-    
-    -- Exit Handler untuk melakukan ROLLBACK otomatis jika terjadi error SQL
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET P_STATUS_PESAN = 'GAGAL: Terjadi kesalahan internal database. Transaksi dibatalkan (Rollback).';
-    END;
-    
-    -- Ambil status reservasi saat ini
-    SELECT STATUS_RESERVASI INTO V_STATUS_RESERVASI
-    FROM RESERVASI
-    WHERE ID_RESERVASI = P_ID_RESERVASI;
-    
-    -- Cek jika ada kamar dalam plot reservasi yang berstatus 'Perawatan'
-    SELECT COUNT(*) INTO V_KAMAR_PERAWATAN
-    FROM DETAIL_RESERVASI DR
-    JOIN KAMAR K ON DR.ID_KAMAR = K.ID_KAMAR
-    WHERE DR.ID_RESERVASI = P_ID_RESERVASI 
-      AND K.STATUS_KAMAR = 'Perawatan';
-    
-    -- Validasi logika bisnis sebelum melakukan perubahan data
-    IF V_STATUS_RESERVASI IS NULL THEN
-        SET P_STATUS_PESAN = 'GAGAL: ID Reservasi tidak ditemukan.';
-    ELSEIF V_STATUS_RESERVASI <> 'Dikonfirmasi' AND V_STATUS_RESERVASI <> 'Menunggu' THEN
-        SET P_STATUS_PESAN = CONCAT('GAGAL: Check-in ditolak karena status reservasi adalah ', V_STATUS_RESERVASI);
-    ELSEIF V_KAMAR_PERAWATAN > 0 THEN
-        SET P_STATUS_PESAN = 'GAGAL: Kamar masih dalam masa perbaikan/Perawatan.';
-    ELSE
-        -- Mulai transaksi atomik
-        START TRANSACTION;
-            
-            -- 1. Catat kedatangan ke tabel checkin
-            INSERT INTO CHECKIN (ID_RESERVASI, ID_PEGAWAI, CATATAN)
-            VALUES (P_ID_RESERVASI, P_ID_PEGAWAI, P_CATATAN);
-            
-            -- [Efek Samping Trigger trg_after_checkin_insert]:
-            -- - Mengubah kamar terkait di detail_reservasi menjadi 'Terisi'
-            -- - Mengubah status reservasi menjadi 'Check-in'
-            
-            -- 2. Tulis riwayat operasional ke log audit
-            INSERT INTO LOG_AKTIVITAS (ID_PEGAWAI, AKTIVITAS, KETERANGAN)
-            VALUES (
-                P_ID_PEGAWAI, 
-                'Check-In Tamu', 
-                CONCAT('Sukses memproses check-in untuk Reservasi ID ', P_ID_RESERVASI, '.')
-            );
-            
-        COMMIT;
-        SET P_STATUS_PESAN = 'SUKSES: Proses check-in berhasil dicatat dan status kamar diperbarui.';
-    END IF;
-END //
-
-DELIMITER ;
-```
-
-### 5.5 Real-time Occupancy & Status Monitoring View
-Keperluan resepsionis (*Front Office*) dipenuhi melalui *view* yang menyajikan data ketersediaan kamar secara *real-time* lengkap dengan detail nama tamu yang sedang menginap tanpa perlu menulis *join* yang rumit di tingkat aplikasi.
-* **Keuntungan:** Mempercepat beban kerja sistem dalam melakukan query ketersediaan kamar langsung dari memori.
-* **Implementasi SQL View:**
-```sql
-CREATE OR REPLACE VIEW VW_DASHBOARD_OKUPANSI_KAMAR AS
+CREATE OR REPLACE VIEW VW_STATUS_KAMAR_OPSIONAL AS
 SELECT 
     K.ID_KAMAR,
     K.NOMOR_KAMAR,
@@ -406,15 +255,13 @@ SELECT
     TK.NAMA_TIPE,
     TK.HARGA_PER_MALAM,
     K.STATUS_KAMAR,
-    -- Dapatkan nama tamu secara dinamis jika status kamar terisi
     CASE 
         WHEN K.STATUS_KAMAR = 'Terisi' THEN (
             SELECT T.NAMA_TAMU 
             FROM DETAIL_RESERVASI DR
             JOIN RESERVASI R ON DR.ID_RESERVASI = R.ID_RESERVASI
             JOIN TAMU T ON R.ID_TAMU = T.ID_TAMU
-            WHERE DR.ID_KAMAR = K.ID_KAMAR 
-              AND R.STATUS_RESERVASI = 'Check-in'
+            WHERE DR.ID_KAMAR = K.ID_KAMAR AND R.STATUS_RESERVASI = 'Check-in'
             LIMIT 1
         )
         ELSE '-'
@@ -423,158 +270,430 @@ FROM KAMAR K
 JOIN TIPE_KAMAR TK ON K.ID_TIPE_KAMAR = TK.ID_TIPE_KAMAR;
 ```
 
+#### 5. `vw_performa_staf_operasional`
+Memantau produktivitas pegawai aktif berdasarkan akumulasi transaksi reservasi, check-in, dan check-out yang ditangani.
+```sql
+CREATE OR REPLACE VIEW VW_PERFORMA_STAF_OPERASIONAL AS
+SELECT 
+    P.ID_PEGAWAI,
+    P.NAMA_PEGAWAI,
+    P.JABATAN,
+    (SELECT COUNT(*) FROM RESERVASI WHERE ID_PEGAWAI = P.ID_PEGAWAI) AS JUMLAH_HANDLE_RESERVASI,
+    (SELECT COUNT(*) FROM CHECKIN WHERE ID_PEGAWAI = P.ID_PEGAWAI) AS JUMLAH_HANDLE_CHECKIN,
+    (SELECT COUNT(*) FROM CHECKOUT WHERE ID_PEGAWAI = P.ID_PEGAWAI) AS JUMLAH_HANDLE_CHECKOUT
+FROM PEGAWAI P
+WHERE P.IS_ACTIVE = 1;
+```
+
 ---
 
-## 🚀 6. Panduan Instalasi & Pengujian Skrip
+### 6.2 Stored Procedures (3 Procedure)
 
-### 6.1 Langkah Instalasi Menggunakan Skrip SQL Berurutan
-Untuk melakukan inisialisasi basis data di server MySQL lokal atau MySQL Workbench, ikuti langkah-langkah di bawah ini secara disiplin:
+#### 1. `sp_hitung_invoice_lengkap`
+Menghitung rincian finansial lengkap dari satu reservasi menggunakan parameter output.
+```sql
+DELIMITER //
 
-1. Buka terminal atau konsol MySQL, hubungkan ke server Anda:
-   ```bash
-   mysql -u root -p
-   ```
-2. Jalankan skrip DDL untuk membuat skema tabel utama:
-   ```sql
-   SOURCE database/ddl/01_ddl.sql;
-   ```
-3. Sisipkan data dummy terstruktur ke dalam tabel master dan transaksi:
-   ```sql
-   SOURCE database/dml/02_dml.sql;
-   ```
-4. Buat objek visualisasi data (Views):
-   ```sql
-   SOURCE database/view/04_view.sql;
-   ```
-5. Daftarkan fungsi bantu penghitungan keuangan (Functions):
-   ```sql
-   SOURCE database/function/07_function.sql;
-   ```
-6. Daftarkan stored procedure transaksional (Procedures):
-   ```sql
-   SOURCE database/procedure/05_procedure.sql;
-   ```
-7. Aktifkan otomasi dan validasi trigger sistem (Triggers):
-   ```sql
-   SOURCE database/trigger/06_trigger.sql;
-   ```
-8. Muat query pengujian operasional harian:
-   ```sql
-   SOURCE database/query/03_query.sql;
-   ```
+CREATE PROCEDURE SP_HITUNG_INVOICE_LENGKAP(
+    IN  P_ID_RESERVASI   INT,
+    OUT P_BIAYA_KAMAR    DECIMAL(12,2),
+    OUT P_BIAYA_TAMBAHAN DECIMAL(12,2),
+    OUT P_GRAND_TOTAL    DECIMAL(12,2),
+    OUT P_TOTAL_DIBAYAR  DECIMAL(12,2),
+    OUT P_SISA_TAGIHAN   DECIMAL(12,2)
+)
+BEGIN
+    SELECT COALESCE(SUM(SUBTOTAL), 0) INTO P_BIAYA_KAMAR
+    FROM DETAIL_RESERVASI WHERE ID_RESERVASI = P_ID_RESERVASI;
 
-### 6.2 Metode Pemulihan Database Menggunakan File Dump
-Apabila Anda ingin langsung memulihkan seluruh struktur dan data siap pakai dari file cadangan (*database dump*):
-* **Menggunakan CLI / Terminal:**
-  ```bash
-  mysql -u nama_user -p hotel_reservation_db < database/dump/hotel_reservation_dump.sql
+    SELECT COALESCE(BIAYA_TAMBAHAN, 0) INTO P_BIAYA_TAMBAHAN
+    FROM CHECKOUT WHERE ID_RESERVASI = P_ID_RESERVASI;
+
+    SET P_GRAND_TOTAL = P_BIAYA_KAMAR + P_BIAYA_TAMBAHAN;
+
+    SELECT COALESCE(SUM(JUMLAH_BAYAR), 0) INTO P_TOTAL_DIBAYAR
+    FROM PEMBAYARAN WHERE ID_RESERVASI = P_ID_RESERVASI AND STATUS_PEMBAYARAN = 'Lunas';
+
+    SET P_SISA_TAGIHAN = P_GRAND_TOTAL - P_TOTAL_DIBAYAR;
+END //
+
+DELIMITER ;
+```
+
+#### 2. `sp_proses_pembayaran_aman`
+Membungkus pencatatan pembayaran dalam transaksi aman ACID. Jika sisa tagihan lunas, status reservasi otomatis diubah menjadi `Dikonfirmasi`.
+```sql
+DELIMITER //
+
+CREATE PROCEDURE SP_PROSES_PEMBAYARAN_AMAN(
+    IN  P_ID_RESERVASI    INT,
+    IN  P_JUMLAH_BAYAR    DECIMAL(12,2),
+    IN  P_METODE          ENUM('Tunai', 'Transfer', 'Kartu Kredit', 'E-Wallet'),
+    IN  P_ID_PEGAWAI      INT,
+    OUT P_STATUS_PESAN    VARCHAR(100)
+)
+BEGIN
+    DECLARE V_BIAYA_KAMAR    DECIMAL(12,2);
+    DECLARE V_BIAYA_TAMBAHAN DECIMAL(12,2);
+    DECLARE V_GRAND_TOTAL    DECIMAL(12,2);
+    DECLARE V_TOTAL_DIBAYAR  DECIMAL(12,2);
+    DECLARE V_SISA_TAGIHAN   DECIMAL(12,2);
+    
+    CALL SP_HITUNG_INVOICE_LENGKAP(P_ID_RESERVASI, V_BIAYA_KAMAR, V_BIAYA_TAMBAHAN, V_GRAND_TOTAL, V_TOTAL_DIBAYAR, V_SISA_TAGIHAN);
+    
+    IF V_SISA_TAGIHAN <= 0 THEN
+        SET P_STATUS_PESAN = 'GAGAL: Tagihan untuk reservasi ini sudah lunas.';
+    ELSE
+        START TRANSACTION;
+            INSERT INTO PEMBAYARAN (ID_RESERVASI, JUMLAH_BAYAR, METODE_PEMBAYARAN, STATUS_PEMBAYARAN)
+            VALUES (P_ID_RESERVASI, P_JUMLAH_BAYAR, P_METODE, 'Lunas');
+            
+            SET V_TOTAL_DIBAYAR = V_TOTAL_DIBAYAR + P_JUMLAH_BAYAR;
+            SET V_SISA_TAGIHAN  = V_GRAND_TOTAL - V_TOTAL_DIBAYAR;
+            
+            UPDATE RESERVASI 
+            SET STATUS_RESERVASI = 'Dikonfirmasi' 
+            WHERE ID_RESERVASI = P_ID_RESERVASI 
+              AND STATUS_RESERVASI = 'Menunggu' 
+              AND V_SISA_TAGIHAN <= 0;
+            
+            INSERT INTO LOG_AKTIVITAS (ID_PEGAWAI, AKTIVITAS, KETERANGAN)
+            VALUES (P_ID_PEGAWAI, 'Mencatat Pembayaran', CONCAT('Pembayaran sebesar Rp', FORMAT(P_JUMLAH_BAYAR, 0, 'id_ID'), ' berhasil dicatat untuk Reservasi ID ', P_ID_RESERVASI));
+        COMMIT;
+        SET P_STATUS_PESAN = CONCAT('SUKSES: Pembayaran berhasil. Sisa tagihan saat ini: Rp', FORMAT(V_SISA_TAGIHAN, 0, 'id_ID'));
+    END IF;
+END //
+
+DELIMITER ;
+```
+
+#### 3. `sp_batal_reservasi_otomatis`
+Membatalkan reservasi yang belum check-in secara aman, mengosongkan kembali status kamar, dan memproses pengembalian dana (*refund*).
+```sql
+DELIMITER //
+
+CREATE PROCEDURE SP_BATAL_RESERVASI_OTOMATIS(
+    IN  P_ID_RESERVASI INT,
+    IN  P_ID_PEGAWAI   INT,
+    OUT P_STATUS_PESAN VARCHAR(100)
+)
+BEGIN
+    DECLARE V_STATUS_SEKARANG VARCHAR(30);
+    
+    SELECT STATUS_RESERVASI INTO V_STATUS_SEKARANG FROM RESERVASI WHERE ID_RESERVASI = P_ID_RESERVASI;
+    
+    IF V_STATUS_SEKARANG IN ('Check-in', 'Selesai', 'Dibatalkan') THEN
+        SET P_STATUS_PESAN = CONCAT('GAGAL: Reservasi tidak bisa dibatalkan karena status sudah ', V_STATUS_SEKARANG);
+    ELSE
+        START TRANSACTION;
+            UPDATE RESERVASI SET STATUS_RESERVASI = 'Dibatalkan' WHERE ID_RESERVASI = P_ID_RESERVASI;
+            
+            UPDATE KAMAR SET STATUS_KAMAR = 'Tersedia' WHERE ID_KAMAR IN (
+                SELECT ID_KAMAR FROM DETAIL_RESERVASI WHERE ID_RESERVASI = P_ID_RESERVASI
+            );
+            
+            UPDATE PEMBAYARAN SET STATUS_PEMBAYARAN = 'Refund' WHERE ID_RESERVASI = P_ID_RESERVASI;
+            
+            INSERT INTO LOG_AKTIVITAS (ID_PEGAWAI, AKTIVITAS, KETERANGAN)
+            VALUES (P_ID_PEGAWAI, 'Pembatalan Reservasi', CONCAT('Reservasi ID ', P_ID_RESERVASI, ' dibatalkan. Kamar dikosongkan kembali.'));
+        COMMIT;
+        SET P_STATUS_PESAN = 'SUKSES: Reservasi berhasil dibatalkan dan status kamar telah diperbarui.';
+    END IF;
+END //
+
+DELIMITER ;
+```
+
+---
+
+### 6.3 Database Triggers (5 Trigger)
+
+#### 1. `trg_before_detail_reservasi_insert` (Anti-Double Booking & Perawatan)
+Mencegah pemesanan kamar jika kamar berstatus sedang dalam perbaikan (*Perawatan*) ATAU jika kamar tersebut telah dipesan oleh tamu lain pada tanggal menginap yang beririsan.
+```sql
+DELIMITER //
+
+CREATE TRIGGER TRG_BEFORE_DETAIL_RESERVASI_INSERT
+BEFORE INSERT ON DETAIL_RESERVASI
+FOR EACH ROW
+BEGIN
+    DECLARE V_STATUS_KAMAR     VARCHAR(20);
+    DECLARE V_TANGGAL_CHECKIN  DATE;
+    DECLARE V_TANGGAL_CHECKOUT DATE;
+    DECLARE V_JUMLAH_BENTROK   INT DEFAULT 0;
+
+    SELECT STATUS_KAMAR INTO V_STATUS_KAMAR FROM KAMAR WHERE ID_KAMAR = NEW.ID_KAMAR;
+
+    IF V_STATUS_KAMAR = 'Perawatan' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'OPERASI DITOLAK: Kamar tidak dapat dipesan karena sedang dalam masa pemeliharaan/Perawatan.';
+    END IF;
+
+    SELECT TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA
+    INTO V_TANGGAL_CHECKIN, V_TANGGAL_CHECKOUT
+    FROM RESERVASI WHERE ID_RESERVASI = NEW.ID_RESERVASI;
+
+    SELECT COUNT(*) INTO V_JUMLAH_BENTROK
+    FROM DETAIL_RESERVASI DR
+    JOIN RESERVASI R ON DR.ID_RESERVASI = R.ID_RESERVASI
+    WHERE DR.ID_KAMAR = NEW.ID_KAMAR
+      AND DR.ID_RESERVASI <> NEW.ID_RESERVASI
+      AND R.STATUS_RESERVASI NOT IN ('Dibatalkan', 'Selesai')
+      AND R.TANGGAL_CHECKIN_RENCANA < V_TANGGAL_CHECKOUT
+      AND R.TANGGAL_CHECKOUT_RENCANA > V_TANGGAL_CHECKIN;
+
+    IF V_JUMLAH_BENTROK > 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'OPERASI DITOLAK: Kamar sudah ter-booking oleh tamu lain pada periode tanggal tersebut.';
+    END IF;
+END //
+
+DELIMITER ;
+```
+
+#### 2. `trg_after_detail_reservasi_insert`
+Secara otomatis mengubah status kamar fisik menjadi `Dipesan` setelah berhasil dialokasikan dalam detail reservasi.
+```sql
+DELIMITER //
+
+CREATE TRIGGER TRG_AFTER_DETAIL_RESERVASI_INSERT
+AFTER INSERT ON DETAIL_RESERVASI
+FOR EACH ROW
+BEGIN
+    UPDATE KAMAR SET STATUS_KAMAR = 'Dipesan'
+    WHERE ID_KAMAR = NEW.ID_KAMAR AND STATUS_KAMAR = 'Tersedia';
+END //
+
+DELIMITER ;
+```
+
+#### 3. `trg_after_checkin_insert`
+Mengubah status kamar fisik menjadi `Terisi` dan status transaksi reservasi menjadi `Check-in` saat tamu melakukan kedatangan fisik.
+```sql
+DELIMITER //
+
+CREATE TRIGGER TRG_AFTER_CHECKIN_INSERT
+AFTER INSERT ON CHECKIN
+FOR EACH ROW
+BEGIN
+    UPDATE KAMAR K
+    JOIN DETAIL_RESERVASI DR ON K.ID_KAMAR = DR.ID_KAMAR
+    SET K.STATUS_KAMAR = 'Terisi'
+    WHERE DR.ID_RESERVASI = NEW.ID_RESERVASI;
+
+    UPDATE RESERVASI SET STATUS_RESERVASI = 'Check-in'
+    WHERE ID_RESERVASI = NEW.ID_RESERVASI;
+END //
+
+DELIMITER ;
+```
+
+#### 4. `trg_after_checkout_insert`
+Mengubah status kamar fisik kembali ke `Tersedia` (jika tidak dalam status perawatan) dan menutup status reservasi menjadi `Selesai` ketika tamu check-out.
+```sql
+DELIMITER //
+
+CREATE TRIGGER TRG_AFTER_CHECKOUT_INSERT
+AFTER INSERT ON CHECKOUT
+FOR EACH ROW
+BEGIN
+    UPDATE KAMAR K
+    JOIN DETAIL_RESERVASI DR ON K.ID_KAMAR = DR.ID_KAMAR
+    SET K.STATUS_KAMAR = 'Tersedia'
+    WHERE DR.ID_RESERVASI = NEW.ID_RESERVASI AND K.STATUS_KAMAR <> 'Perawatan';
+
+    UPDATE RESERVASI SET STATUS_RESERVASI = 'Selesai'
+    WHERE ID_RESERVASI = NEW.ID_RESERVASI;
+END //
+
+DELIMITER ;
+```
+
+#### 5. `trg_after_pembayaran_insert`
+Perekaman audit trail keuangan otomatis ke dalam tabel log aktivitas pegawai setiap kali pembayaran transaksi kasir berhasil dicatat.
+```sql
+DELIMITER //
+
+CREATE TRIGGER TRG_AFTER_PEMBAYARAN_INSERT
+AFTER INSERT ON PEMBAYARAN
+FOR EACH ROW
+BEGIN
+    INSERT INTO LOG_AKTIVITAS (ID_PEGAWAI, AKTIVITAS, KETERANGAN)
+    SELECT
+        R.ID_PEGAWAI,
+        'Pembayaran Masuk',
+        CONCAT('Pembayaran Sukses untuk Reservasi ID ', NEW.ID_RESERVASI, 
+               ' sebesar Rp', FORMAT(NEW.JUMLAH_BAYAR, 0, 'id_ID'), 
+               ' melalui metode [', NEW.METODE_PEMBAYARAN, '].')
+    FROM RESERVASI R
+    WHERE R.ID_RESERVASI = NEW.ID_RESERVASI;
+END //
+
+DELIMITER ;
+```
+
+---
+
+### 6.4 User-Defined Functions (3 Function)
+
+#### 1. `fn_hitung_durasi_malam`
+Menghitung jumlah malam menginap berdasarkan selisih hari tanggal masuk dan keluar secara aman.
+```sql
+DELIMITER //
+
+CREATE FUNCTION FN_HITUNG_DURASI_MALAM(
+    P_CHECKIN  DATE,
+    P_CHECKOUT DATE
+)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE V_DURASI INT;
+    
+    IF P_CHECKOUT <= P_CHECKIN OR P_CHECKIN IS NULL OR P_CHECKOUT IS NULL THEN
+        RETURN 0;
+    END IF;
+    
+    SET V_DURASI = DATEDIFF(P_CHECKOUT, P_CHECKIN);
+    RETURN V_DURASI;
+END //
+
+DELIMITER ;
+```
+
+#### 2. `fn_total_pendapatan_reservasi`
+Menghitung total tagihan kotor (akumulasi subtotal kamar + biaya tambahan check-out jika ada).
+```sql
+DELIMITER //
+
+CREATE FUNCTION FN_TOTAL_PENDAPATAN_RESERVASI(
+    P_ID_RESERVASI INT
+)
+RETURNS DECIMAL(12,2)
+READS SQL DATA
+BEGIN
+    DECLARE V_TOTAL_KAMAR    DECIMAL(12,2);
+    DECLARE V_TOTAL_TAMBAHAN DECIMAL(12,2);
+    
+    SELECT COALESCE(SUM(SUBTOTAL), 0) INTO V_TOTAL_KAMAR
+    FROM DETAIL_RESERVASI WHERE ID_RESERVASI = P_ID_RESERVASI;
+    
+    SELECT COALESCE(BIAYA_TAMBAHAN, 0) INTO V_TOTAL_TAMBAHAN
+    FROM CHECKOUT WHERE ID_RESERVASI = P_ID_RESERVASI;
+    
+    RETURN V_TOTAL_KAMAR + V_TOTAL_TAMBAHAN;
+END //
+
+DELIMITER ;
+```
+
+#### 3. `fn_cek_status_pembayaran` (Function Composition)
+Menentukan status keuangan reservasi dengan membandingkan total pembayaran lunas dengan total piutang reservasi (memanggil `fn_total_pendapatan_reservasi`).
+```sql
+DELIMITER //
+
+CREATE FUNCTION FN_CEK_STATUS_PEMBAYARAN(
+    P_ID_RESERVASI INT
+)
+RETURNS VARCHAR(30)
+READS SQL DATA
+BEGIN
+    DECLARE V_TOTAL_TAGIHAN DECIMAL(12,2);
+    DECLARE V_TOTAL_BAYAR   DECIMAL(12,2);
+    
+    -- Memanggil fungsi pendapatan reservasi (Komposisi Fungsi)
+    SET V_TOTAL_TAGIHAN = FN_TOTAL_PENDAPATAN_RESERVASI(P_ID_RESERVASI);
+    
+    SELECT COALESCE(SUM(JUMLAH_BAYAR), 0) INTO V_TOTAL_BAYAR
+    FROM PEMBAYARAN
+    WHERE ID_RESERVASI = P_ID_RESERVASI AND STATUS_PEMBAYARAN = 'Lunas';
+    
+    IF V_TOTAL_BAYAR = 0 THEN
+        RETURN 'BELUM BAYAR';
+    ELSEIF V_TOTAL_BAYAR < V_TOTAL_TAGIHAN THEN
+        RETURN 'KURANG BAYAR';
+    ELSE
+        RETURN 'LUNAS';
+    END IF;
+END //
+
+DELIMITER ;
+```
+
+---
+
+### 6.5 Skenario Uji Coba Integrasi Skrip (Testing Suite)
+
+#### Skenario A: Pengujian Proteksi Trigger & Kontrol Data (Negatif)
+Membuktikan ketangguhan pertahanan database terhadap *input* tidak valid atau bentrok jadwal:
+
+* **Pengecekan Kamar Perawatan (Maintenance Room Restriction):**
+  ```sql
+  -- Input reservasi baru ID: 911
+  INSERT INTO RESERVASI (ID_RESERVASI, ID_TAMU, ID_PEGAWAI, TANGGAL_RESERVASI, TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA, STATUS_RESERVASI)
+  VALUES (911, 3, 2, NOW(), '2026-07-01', '2026-07-03', 'Menunggu');
+
+  -- Coba pesan Kamar ID: 5 (Nomor Kamar 105, berstatus 'Perawatan')
+  -- Ekspektasi: Operasi ditolak dengan pesan: "OPERASI DITOLAK: Kamar tidak dapat dipesan karena sedang dalam masa pemeliharaan/Perawatan"
+  INSERT INTO DETAIL_RESERVASI (ID_DETAIL_RESERVASI, ID_RESERVASI, ID_KAMAR, JUMLAH_MALAM, HARGA_PER_MALAM)
+  VALUES (911, 911, 5, 2, 350000.00);
   ```
-* **Menggunakan GUI MySQL Workbench:**
-  1. Pilih menu utama `Server` -> `Data Import`.
-  2. Pilih opsi radio button `Import from Self-Contained File`.
-  3. Arahkan direktori path ke file [hotel_reservation_dump.sql](file:///d:/Statistika/Tugas/Basdat/project/Hotel_Reservation_System/database/dump/hotel_reservation_dump.sql).
-  4. Pilih target schema: `hotel_reservation_db` (klik *New* jika belum dibuat).
-  5. Klik tombol `Start Import` dan tunggu hingga indikator menunjukkan status selesai.
+
+* **Pengecekan Double Booking (Anti-Collision Room Validation):**
+  ```sql
+  -- Input reservasi ID: 912 untuk rentang tanggal '2026-05-11' s/d '2026-05-13'
+  INSERT INTO RESERVASI (ID_RESERVASI, ID_TAMU, ID_PEGAWAI, TANGGAL_RESERVASI, TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA, STATUS_RESERVASI)
+  VALUES (912, 1, 1, NOW(), '2026-05-11', '2026-05-13', 'Dikonfirmasi');
+
+  -- Coba pesan Kamar ID: 1 (Nomor Kamar 101, tipe Standard)
+  -- Ekspektasi: Gagal karena Kamar 101 sudah terisi atau dipesan pada tanggal tersebut oleh reservasi lain.
+  -- DBMS melempar pesan: "OPERASI DITOLAK: Kamar sudah ter-booking oleh tamu lain pada periode tanggal tersebut"
+  INSERT INTO DETAIL_RESERVASI (ID_DETAIL_RESERVASI, ID_RESERVASI, ID_KAMAR, JUMLAH_MALAM, HARGA_PER_MALAM)
+  VALUES (912, 912, 1, 2, 350000.00);
+  ```
+
+#### Skenario B: Pengujian Alur Transaksi Berhasil (Positif)
+Simulasi pemesanan kamar Deluxe nomor 104 (ID Kamar: 4) secara linier tanpa eror:
+
+* **Langkah 1: Inisialisasi Reservasi & Detail Kamar**
+  ```sql
+  INSERT INTO RESERVASI (ID_RESERVASI, ID_TAMU, ID_PEGAWAI, TANGGAL_RESERVASI, TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA, STATUS_RESERVASI)
+  VALUES (913, 2, 4, NOW(), '2026-08-01', '2026-08-03', 'Dikonfirmasi');
+
+  INSERT INTO DETAIL_RESERVASI (ID_DETAIL_RESERVASI, ID_RESERVASI, ID_KAMAR, JUMLAH_MALAM, HARGA_PER_MALAM)
+  VALUES (913, 913, 4, 2, 350000.00);
+  ```
+  *(Status Kamar 104 otomatis berubah menjadi 'Dipesan' akibat efek trigger `trg_after_detail_reservasi_insert`)*
+
+* **Langkah 2: Melakukan Pembayaran Pelunasan**
+  ```sql
+  INSERT INTO PEMBAYARAN (ID_RESERVASI, JUMLAH_BAYAR, METODE_PEMBAYARAN, STATUS_PEMBAYARAN)
+  VALUES (913, 700000.00, 'E-Wallet', 'Lunas');
+  ```
+  *(Trigger otomatis menulis log audit mutasi keuangan ke tabel `log_aktivitas`)*
+
+* **Langkah 3: Pelaksanaan Kedatangan Tamu (Check-In)**
+  ```sql
+  INSERT INTO CHECKIN (ID_CHECKIN, ID_RESERVASI, ID_PEGAWAI, CATATAN)
+  VALUES (913, 913, 4, 'Tamu check-in, kamar siap digunakan.');
+  ```
+  *(Trigger otomatis memperbarui status Kamar 104 menjadi 'Terisi' dan status reservasi menjadi 'Check-in')*
+
+* **Langkah 4: Proses Kepulangan Tamu (Check-Out)**
+  ```sql
+  INSERT INTO CHECKOUT (ID_CHECKOUT, ID_RESERVASI, ID_PEGAWAI, BIAYA_TAMBAHAN, CATATAN)
+  VALUES (913, 913, 2, 0.00, 'Tamu check-out tepat waktu.');
+  ```
+  *(Kamar 104 dibebaskan kembali menjadi 'Tersedia' dan transaksi reservasi 913 ditutup menjadi 'Selesai')*
 
 ---
 
-### 6.3 Skenario Pengujian Validasi Sistem (Testing Suite)
+## 🏁 7. Kesimpulan & Saran Pengembangan
 
-#### A. Skenario Negatif (Uji Coba Proteksi Kegagalan)
-Jalankan perintah SQL di bawah ini untuk membuktikan bahwa database menolak operasi ilegal secara mandiri:
+### Kesimpulan
+Sistem Basis Data Reservasi Hotel (Enterprise Version) rancangan **Kelompok G-1 UNSOED 2026** telah berhasil mereduksi seluruh kompleksitas operasional hotel ke dalam rancangan 12 tabel terintegrasi yang memenuhi kriteria bentuk normal ketiga (3NF). Seluruh aturan bisnis penting—mulai dari proteksi bentrok tanggal hunian (*double booking*), penghitungan otomatis subtotal kamar, sinkronisasi alur kamar fisik secara atomik, hingga penegakan kontrol audit trail—berhasil diekapsulasi secara mandiri di level database. Arsitektur ini menjamin keandalan transaksi finansial dan integritas data tanpa bergantung pada validasi aplikasi luar.
 
-1. **Uji Coba Reservasi Kamar dalam Perawatan (Ekspektasi: Gagal)**
-   ```sql
-   -- Langkah 1: Buat reservasi penampung
-   INSERT INTO RESERVASI (ID_RESERVASI, ID_TAMU, ID_PEGAWAI, TANGGAL_RESERVASI, TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA, STATUS_RESERVASI)
-   VALUES (999, 1, 2, NOW(), '2026-07-01', '2026-07-03', 'Menunggu');
-   
-   -- Langkah 2: Plot kamar nomor 105 (ID Kamar: 5) yang berstatus 'Perawatan'
-   -- DBMS wajib melemparkan error 1644: "Kamar tidak dapat dipesan karena sedang dalam masa pemeliharaan/Perawatan"
-   INSERT INTO DETAIL_RESERVASI (ID_DETAIL_RESERVASI, ID_RESERVASI, ID_KAMAR, JUMLAH_MALAM, HARGA_PER_MALAM)
-   VALUES (999, 999, 5, 2, 350000.00);
-   ```
-
-2. **Uji Coba Double Booking Kamar (Ekspektasi: Gagal)**
-   ```sql
-   -- Langkah 1: Buat reservasi penampung kedua untuk rentang tanggal yang sama
-   INSERT INTO RESERVASI (ID_RESERVASI, ID_TAMU, ID_PEGAWAI, TANGGAL_RESERVASI, TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA, STATUS_RESERVASI)
-   VALUES (998, 2, 2, NOW(), '2026-05-11', '2026-05-13', 'Dikonfirmasi');
-   
-   -- Langkah 2: Plot kamar nomor 101 (ID Kamar: 1) yang sudah dipesan oleh tamu lain pada tanggal tersebut
-   -- DBMS wajib melemparkan error 1644: "Kamar sudah ter-booking oleh tamu lain pada periode tanggal tersebut"
-   INSERT INTO DETAIL_RESERVASI (ID_DETAIL_RESERVASI, ID_RESERVASI, ID_KAMAR, JUMLAH_MALAM, HARGA_PER_MALAM)
-   VALUES (998, 998, 1, 2, 350000.00);
-   ```
-
-3. **Uji Coba Proteksi Pembayaran Berlebih / Overpayment (Ekspektasi: Gagal)**
-   ```sql
-   -- Ambil sisa tagihan dari reservasi ID 13 menggunakan function bantu
-   SELECT FN_CEK_STATUS_PEMBAYARAN(13) AS 'Status Awal';
-   
-   -- Misalkan sisa tagihan adalah Rp200.000, lalu kasir mencoba menginput pembayaran Rp500.000
-   -- DBMS wajib menggagalkan insert data karena diproteksi oleh trigger
-   INSERT INTO PEMBAYARAN (ID_RESERVASI, JUMLAH_BAYAR, METODE_PEMBAYARAN, STATUS_PEMBAYARAN)
-   VALUES (13, 500000.00, 'Tunai', 'Lunas');
-   ```
-
----
-
-#### B. Skenario Positif (Uji Coba Keberhasilan Proses End-to-End)
-Ikuti langkah-langkah di bawah ini untuk mensimulasikan alur bisnis operasional hotel yang sukses:
-
-1. **Membuat Registrasi Reservasi Baru**
-   ```sql
-   -- Tambahkan header reservasi untuk Tamu ID: 2, Pegawai ID: 4
-   INSERT INTO RESERVASI (ID_RESERVASI, ID_TAMU, ID_PEGAWAI, TANGGAL_RESERVASI, TANGGAL_CHECKIN_RENCANA, TANGGAL_CHECKOUT_RENCANA, STATUS_RESERVASI)
-   VALUES (900, 2, 4, NOW(), '2026-08-01', '2026-08-03', 'Menunggu');
-   
-   -- Tambahkan detail pemesanan Kamar ID: 4 (Nomor kamar 104, tipe Deluxe) untuk 2 malam
-   INSERT INTO DETAIL_RESERVASI (ID_DETAIL_RESERVASI, ID_RESERVASI, ID_KAMAR, JUMLAH_MALAM, HARGA_PER_MALAM)
-   VALUES (900, 900, 4, 2, 350000.00);
-   ```
-   * *Verifikasi:* Kamar nomor 104 akan otomatis berganti status dari `Tersedia` menjadi `Dipesan`.
-   ```sql
-   SELECT NOMOR_KAMAR, STATUS_KAMAR FROM KAMAR WHERE ID_KAMAR = 4;
-   ```
-
-2. **Melakukan Pembayaran Transaksi**
-   ```sql
-   -- Panggil stored procedure pembayaran aman untuk melunasi tagihan (Rp700.000)
-   CALL SP_PROSES_PEMBAYARAN_AMAN(900, 700000.00, 'Transfer', 4, @out_pesan);
-   SELECT @out_pesan AS 'Log Eksekusi Pembayaran';
-   ```
-   * *Verifikasi:* Status Reservasi 900 otomatis berganti menjadi `Dikonfirmasi` dan data mutasi tercatat pada log aktivitas audit.
-   ```sql
-   SELECT STATUS_RESERVASI FROM RESERVASI WHERE ID_RESERVASI = 900;
-   SELECT * FROM LOG_AKTIVITAS ORDER BY ID_LOG DESC LIMIT 1;
-   ```
-
-3. **Mengeksekusi Proses Kedatangan Tamu (Check-In)**
-   ```sql
-   -- Panggil stored procedure checkin aman
-   CALL SP_PROSES_CHECKIN_AMAN(900, 4, 'Check-in lancar, kunci diserahkan.', @out_pesan_checkin);
-   SELECT @out_pesan_checkin AS 'Log Eksekusi Check-In';
-   ```
-   * *Verifikasi:* Kamar nomor 104 berubah status menjadi `Terisi`, dan nama tamu muncul di Dashboard Real-time.
-   ```sql
-   SELECT * FROM VW_DASHBOARD_OKUPANSI_KAMAR WHERE NOMOR_KAMAR = '104';
-   ```
-
-4. **Mengeksekusi Tamu Pulang (Check-Out)**
-   ```sql
-   -- Catat data checkout dengan biaya tambahan denda Rp50.000 karena gelas pecah
-   INSERT INTO CHECKOUT (ID_RESERVASI, ID_PEGAWAI, BIAYA_TAMBAHAN, CATATAN)
-   VALUES (900, 2, 50000.00, 'Denda gelas pecah di kamar.');
-   ```
-   * *Verifikasi Akhir:* Status reservasi ditutup menjadi `Selesai`, dan status kamar kembali dibersihkan menjadi `Tersedia`.
-   ```sql
-   SELECT STATUS_RESERVASI FROM RESERVASI WHERE ID_RESERVASI = 900;
-   SELECT NOMOR_KAMAR, STATUS_KAMAR FROM KAMAR WHERE ID_KAMAR = 4;
-   ```
-
----
-
-## 👨‍💻 Kontributor & Pengembangan
-
-Aplikasi Arsitektur Basis Data ini dirancang untuk memenuhi standar sistem ERP perhotelan modern skala menengah ke atas. Anda dipersilakan melakukan *forking*, modifikasi skema tabel, atau integrasi langsung dengan framework backend pilihan Anda (Node.js, Laravel, Django, atau Spring Boot).
+### Saran Pengembangan
+1. **Penerapan Enkripsi Data Pribadi:** Melakukan enkripsi data sensitif tamu pada kolom `no_identitas` menggunakan fungsi AES bawaan MySQL (`AES_ENCRYPT` dan `AES_DECRYPT`) untuk kepatuhan terhadap regulasi privasi data.
+2. **Table Partitioning:** Menerapkan pembagian tabel (*partitioning*) secara berkala (misal per tahun) pada tabel `log_aktivitas` dan `pembayaran` untuk mengantisipasi penurunan kecepatan query saat data mencapai jutaan baris.
+3. **Event Scheduler:** Memanfaatkan scheduler internal MySQL untuk mengubah reservasi dengan status `Menunggu` yang tidak dibayar dalam waktu 2 jam setelah pembuatan reservasi menjadi `Dibatalkan` secara otomatis.
