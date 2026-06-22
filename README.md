@@ -13,6 +13,7 @@ Sistem dibangun dengan memenuhi standar normalisasi **3NF**, dilengkapi trigger 
 
 ---
 
+
 ## 👥 Anggota Tim — Kelompok G
 
 | No | Nama | NIM | Kontribusi Utama |
@@ -23,6 +24,20 @@ Sistem dibangun dengan memenuhi standar normalisasi **3NF**, dilengkapi trigger 
 | 4  | [Bertha Misella Silalahi] | [K1D024068] | Trigger,Procedure, Video Demo|
 
 ---
+
+## Rumusan Masalah
+1.	Bagaimana merancang sistem basis data yang mampu mengelola proses reservasi hotel secara terintegrasi?
+2.	Bagaimana membangun model data yang sesuai dengan kebutuhan operasional hotel?
+3.	Bagaimana menerapkan normalisasi hingga bentuk normal ketiga (3NF)?
+4.	Bagaimana mengimplementasikan basis data menggunakan DBMS relasional?
+5.	Bagaimana membuat query, view, function, procedure, dan trigger untuk mendukung operasional hotel?
+
+## Tujuan
+1.	Merancang sistem basis data reservasi hotel yang terstruktur dan terintegrasi.
+2.	Membuat Entity Relationship Diagram (ERD) dan skema relasional.
+3.	Menerapkan proses normalisasi hingga Third Normal Form (3NF).
+4.	Mengimplementasikan basis data menggunakan SQL.
+5.	Membuat query dan objek basis data lanjutan untuk mendukung pengelolaan hotel.
 
 ## 🗂️ Struktur Repository
 
@@ -83,9 +98,51 @@ log_aktivitas ──> pegawai
 | `kamar_fasilitas` | Relasi many-to-many kamar–fasilitas | 127 |
 | `log_aktivitas` | Audit trail aktivitas pegawai | 12 |
 
-### ERD
+## Business Rules
+1.	Setiap tamu harus terdaftar dalam sistem sebelum melakukan reservasi.
+2.	Nomor identitas dan email tamu harus bersifat unik.
+3.	Setiap reservasi harus terkait dengan satu tamu.
+4.	Setiap reservasi harus dicatat atau ditangani oleh seorang pegawai.
+5.	Tanggal check-out harus lebih besar dari tanggal check-in.
+6.	Satu reservasi dapat mencakup satu atau lebih kamar.
+7.	Satu kamar hanya boleh digunakan oleh satu reservasi pada periode yang sama.
+8.	Setiap kamar harus memiliki satu tipe kamar.
+9.	Nomor kamar harus unik.
+10.	Status kamar harus selalu diperbarui sesuai kondisi terkini.
+11.	Subtotal detail reservasi dihitung dari harga per malam dikalikan jumlah malam menginap. 
+12.	Reservasi dapat memiliki satu atau lebih transaksi pembayaran.
+13.	Jumlah pembayaran yang diterima tidak boleh bernilai negatif.
+14.	Status pembayaran harus menunjukkan kondisi pembayaran yang sebenarnya.
+15.	Check-in hanya dapat dilakukan untuk reservasi yang valid dan aktif.
+16.	Setiap reservasi hanya dapat memiliki satu data check-in.
+17.	Check-out hanya dapat dilakukan setelah proses check-in tercatat.
+18.	Setiap reservasi hanya dapat memiliki satu data check-out.
+19.	Data check-in dan check-out harus dicatat oleh pegawai yang bertugas.
+20.	Biaya tambahan saat check-out tidak boleh bernilai negatif.
+21.	Satu kamar dapat memiliki banyak fasilitas dan satu fasilitas dapat tersedia pada banyak kamar.
+22.	Nama fasilitas harus unik.
+23.	Setiap aktivitas penting yang dilakukan pegawai harus dicatat dalam log aktivitas.
+24.	Email pegawai harus unik.
+25.	Data yang sudah digunakan dalam transaksi reservasi tidak boleh dihapus secara langsung. 
 
-![ERD Sistem Reservasi Hotel](docs/ERD_Reservasi_Hotel.png)
+
+## Relasi dan Kardinalitas
+1.	tamu → reservasi : 1 : N (Satu tamu dapat melakukan banyak reservasi, sedangkan satu reservasi hanya dimiliki oleh satu tamu)
+2.	pegawai → reservasi : 1 : N (Satu pegawai dapat menangani banyak reservasi, sedangkan satu reservasi hanya ditangani oleh satu pegawai)
+3.	tipe_kamar → kamar : 1 : N (Satu tipe kamar dapat dimiliki oleh banyak kamar, sedangkan satu kamar hanya memiliki satu tipe kamar)
+4.	reservasi → detail_reservasi : 1 : N (Satu reservasi dapat memiliki beberapa detail reservasi, sedangkan satu detail reservasi hanya terkait dengan satu reservasi)
+5.	kamar → detail_reservasi : 1 : N (Satu kamar dapat muncul pada banyak detail reservasi dalam waktu yang berbeda, sedangkan satu detail reservasi hanya merujuk pada satu kamar)
+6.	reservasi → pembayaran : 1 : N (Satu reservasi dapat memiliki beberapa transaksi pembayaran, sedangkan satu pembayaran hanya terkait dengan satu reservasi)
+7.	reservasi → checkin : 1 : 1 (Satu reservasi hanya memiliki satu data check-in dan satu data check-in hanya terkait dengan satu reservasi)
+8.	reservasi → checkout : 1 : 1 (Satu reservasi hanya memiliki satu data check-out dan satu data check-out hanya terkait dengan satu reservasi)
+9.	pegawai → checkin : 1 : N (Satu pegawai dapat mencatat banyak proses check-in, sedangkan satu data check-in hanya dicatat oleh satu pegawai yang bertugas)
+10.	pegawai → checkout : 1 : N (Satu pegawai dapat mencatat banyak proses check-out, sedangkan satu data check-out hanya dicatat oleh satu pegawai yang bertugas)
+11.	pegawai → log aktivitas : 1 : N (Satu pegawai dapat menghasilkan banyak catatan aktivitas, sedangkan satu log aktivitas hanya dimiliki oleh satu pegawai)
+12.	kamar → kamar fasilitas : 1 : N melalui tabel kamar_fasilitas (Satu kamar dapat memiliki banyak data pada tabel KAMAR_FASILITAS, sedangkan satu data KAMAR_FASILITAS hanya terkait dengan satu kamar)
+13.	fasilitas → kamar fasilitas : 1 : N (Satu fasilitas dapat digunakan oleh banyak kamar, sedangkan satu data KAMAR_FASILITAS hanya terkait dengan satu fasilitas)
+
+Relasi antara entitas KAMAR dan FASILITAS sebenarnya merupakan relasi Many-to-Many (M:N). Untuk mengimplementasikan relasi tersebut pada basis data relasional, digunakan entitas asosiasi KAMAR_FASILITAS yang memecah hubungan M:N menjadi dua relasi 1:N, yaitu KAMAR–KAMAR_FASILITAS dan FASILITAS–KAMAR_FASILITAS
+
 
 ---
 
@@ -156,11 +213,8 @@ mysql -u root -p hotel_reservation_db < sql/07_function.sql
 | Q3 | Pemetaan Fasilitas per Kamar | Info fasilitas untuk tamu |
 | Q4 | Invoice Grand Total | Total tagihan per reservasi (6 tabel JOIN) |
 | Q5 | Analisis Kamar Terlaris | Tingkat okupansi per tipe kamar |
-| Q6 | Log Aktivitas Pegawai | Audit trail dengan LEFT JOIN |
-| Q7 | Riwayat Pembayaran Cicilan | Monitoring cicilan per reservasi |
-| Q8 | Tren Pendapatan Bulanan | Laporan omset dengan CTE |
-| Q9 | Deteksi Tamu Loyal | Kandidat program loyalitas (HAVING) |
-| Q10 | Metode Pembayaran Dominan | Analisis volume & nominal per metode |
+| Q6 | Tren Pendapatan Bulanan | Laporan omset dengan CTE |
+| Q7 | Deteksi Tamu Loyal | Kandidat program loyalitas (HAVING) |
 
 ### View (04_view.sql)
 
@@ -278,7 +332,7 @@ mysql -u root -p hotel_reservation_db < sql/06_trigger.sql
 | Constraint (PK/FK/UNIQUE/CHECK/dll.) | 60+ |
 | Index | 7 |
 | Baris data dummy | 300+ |
-| Query SELECT | 10 |
+| Query SELECT | 7 |
 | View | 5 |
 | Stored Procedure | 3 |
 | Trigger | 5 |
