@@ -17,11 +17,10 @@ Sistem dibangun dengan memenuhi standar normalisasi **3NF**, dilengkapi trigger 
 
 | No | Nama | NIM | Kontribusi Utama |
 |----|------|-----|-----------------|
-| 1  | [Nama Anggota 1] | [NIM] | ERD & Logical Design |
-| 2  | [Nama Anggota 2] | [NIM] | DDL & Normalisasi |
-| 3  | [Nama Anggota 3] | [NIM] | DML & Data Dummy |
-| 4  | [Nama Anggota 4] | [NIM] | Query, View & Function |
-| 5  | [Nama Anggota 5] | [NIM] | Procedure, Trigger & Laporan |
+| 1  | [Nasywa Putri Maitsa] | [K1D024043] | PPT, View dan Function |
+| 2  | [Nayla Edenine Qohar] | [K1D024044] | DDL, DML, Data Dummy, Laporan |
+| 3  | [Abdurrahman Yusuf] | [K1D024058] | ERD, Query dan Logical Design |
+| 4  | [Bertha Misella Silalahi] | [K1D024068] | Trigger,Procedure, Video Demo|
 
 ---
 
