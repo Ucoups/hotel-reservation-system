@@ -65,13 +65,13 @@ hotel-reservation-db/
 │
 ├── 📁 docs/
 │   ├── Laporan_Reservasi_Hotel_Lengkap.pdf   ← Laporan lengkap BAB I–VI
-│   └── ERD_Reservasi_Hotel.png               ← Diagram ERD (Crow's Foot)
+│   └── Presentasi_Kelompok_G.pptx        ← Slide presentasi (maks. 15 slide)
+│   └── Video demo_Kelompok G            ← Video penjelasan pengoperasian database pada SQL
+├── 📁 ERD/
+│   └──ERD_Reservasi_Hotel.png               ← Diagram ERD (Crow's Foot)
 │
 ├── 📁 dump/
 │   └── hotel_reservation_db_dump.sql     ← Full database backup (langsung restore)
-│
-└── 📁 slides/
-    └── Presentasi_Kelompok_G.pptx        ← Slide presentasi (maks. 15 slide)
 ```
 
 ---
