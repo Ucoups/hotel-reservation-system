@@ -68,16 +68,15 @@ hotel-reservation-db/
 │   ├── 05_procedure.sql                  ← 3 STORED PROCEDURE (invoice, bayar, batal)
 │   ├── 06_trigger.sql                    ← 5 TRIGGER (anti-double booking, audit trail)
 │   └── 07_function.sql                   ← 3 FUNCTION (durasi, tagihan, status bayar)
-│
+│   └── hotel_reservation_db_dump.sql     ← Full database backup (langsung restore)
+|
 ├── 📁 docs/
 │   ├── Laporan_Reservasi_Hotel_Lengkap.pdf   ← Laporan lengkap BAB I–VI
 │   ├── Presentasi_Kelompok_G.pptx        ← Slide presentasi (maks. 15 slide)
 │   └── Video demo_Kelompok G            ← Video penjelasan pengoperasian database pada SQL
+|
 ├── 📁 ERD/
 │   └──ERD_Reservasi_Hotel.png               ← Diagram ERD (Crow's Foot)
-│
-├── 📁 dump/
-│   └── hotel_reservation_db_dump.sql     ← Full database backup (langsung restore)
 |
 └── 📁 normalization/
 |    ├── 1NF.md
