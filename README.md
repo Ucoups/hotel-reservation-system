@@ -54,7 +54,7 @@ hotel-reservation-db/
 │
 ├── 📄 README.md                          ← Dokumentasi utama (file ini)
 │
-├── 📁 sql/
+├── 📁 database/
 │   ├── 01_ddl.sql                        ← CREATE TABLE, constraint, index, trigger dasar
 │   ├── 02_dml.sql                        ← INSERT data dummy (12 tabel, 300+ baris)
 │   ├── 03_query.sql                      ← 10 query SELECT (sederhana → kompleks)
