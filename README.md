@@ -80,11 +80,15 @@ hotel-reservation-db/
 │   └── hotel_reservation_db_dump.sql     ← Full database backup (langsung restore)
 |
 └── 📁 normalization/
-    ├── 1NF.md
-    ├── 2NF.md
-    ├── 3NF.md
-    ├── README_Normalisasi.md
-    └── UNF.md
+|    ├── 1NF.md
+|    ├── 2NF.md
+|    ├── 3NF.md
+|    ├── README_Normalisasi.md
+|    └── UNF.md
+|
+└── 📁 sample_data/
+
+
 
 ```
 
