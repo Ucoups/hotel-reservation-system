@@ -53,6 +53,12 @@ Berdasarkan permasalahan tersebut, dilakukan perancangan dan implementasi Sistem
 hotel-reservation-db/
 │
 ├── 📄 README.md                          ← Dokumentasi utama (file ini)
+|
+|
+├── 📁 data_dictionary/
+|   ├── Data_Dictionary.md
+|   ├── Data_Dictionary.md
+|   └── Data_Dictionary.xlsx
 │
 ├── 📁 database/
 │   ├── 01_ddl.sql                        ← CREATE TABLE, constraint, index, trigger dasar
@@ -65,13 +71,21 @@ hotel-reservation-db/
 │
 ├── 📁 docs/
 │   ├── Laporan_Reservasi_Hotel_Lengkap.pdf   ← Laporan lengkap BAB I–VI
-│   └── Presentasi_Kelompok_G.pptx        ← Slide presentasi (maks. 15 slide)
+│   ├── Presentasi_Kelompok_G.pptx        ← Slide presentasi (maks. 15 slide)
 │   └── Video demo_Kelompok G            ← Video penjelasan pengoperasian database pada SQL
 ├── 📁 ERD/
 │   └──ERD_Reservasi_Hotel.png               ← Diagram ERD (Crow's Foot)
 │
 ├── 📁 dump/
 │   └── hotel_reservation_db_dump.sql     ← Full database backup (langsung restore)
+|
+├── 📁 normalization/
+|   ├── 1NF.md
+|   ├── 2NF.md
+|   ├── 3NF.md
+|   ├── README_Normalisasi.md
+|   └── UNF.md
+
 ```
 
 ---
